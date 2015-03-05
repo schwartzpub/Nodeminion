@@ -1,0 +1,43 @@
+<!-- views/pages/profile.ejs -->
+
+<!DOCTYPE html>
+<html>
+<head>
+	<% include ../partials/head %>
+</head>
+<body>
+<div class="uk-container uk-container-center uk-margin-large-bottom">
+    <header>
+		<% include ../partials/header %>
+    </header>
+	
+	<main>
+	<div class="uk-grid uk-margin-top">
+		<div class="uk-width-medium-1-5"></div>
+		<div class="uk-width-medium-3-5">
+			<div class="uk-grid uk-panel uk-panel-box uk-panel-box-secondary">
+				<div class="uk-width-1-2">
+					<div class="uk-panel">
+						<h3 class="uk-panel-title"><i class="uk-icon-gears"></i> Profile</h3>
+						<a href="/logout" class="uk-button uk-button-small">Logout</a>
+						<hr>
+						<ul class="uk-list">
+							<li><strong>Id</strong>: <%= user._id %><br></li>
+							<li><strong>Username</strong>: <%= user.local.username %><br></li>
+							<li><strong>password</strong>: <%= user.local.password %></li>
+						</ul>
+					</div>
+				</div>
+				<div class="uk-width-1-2">
+					<div class="uk-panel">
+					
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="uk-width-medium-1-5"></div>
+	</div>
+	</main>
+</div>
+</body>
+</html>

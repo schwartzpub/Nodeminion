@@ -1,0 +1,39 @@
+<!-- views/pages/index.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include ../partials/head %>
+</head>
+<body>
+<div class="uk-container uk-container-center uk-margin-large-bottom">
+    <header>
+		<% include ../partials/header %>
+    </header>
+
+    <main>
+	<div class="uk-grid uk-margin-top">
+		<div class="uk-width-small-1-1"><br/></div>
+		<div class="uk-width-small-1-1">
+			<% include ../partials/players %>
+		</div>
+		<!-- <div class="uk-width-small-1-2">
+			<% //include ../partials/loginpartial %>
+		</div> -->
+		<div class="uk-width-small-1-1"><br/></div>
+		<div class="uk-width-small-1-1">
+			<% include ../partials/games %>
+		</div>
+		<div class="uk-width-small-1-1"><br/></div>
+		<div class="uk-width-small-1-1">
+			<% include ../partials/lobby %>
+		</div>
+	</div>
+    </main>
+
+    <footer>
+        <% include ../partials/footer %>
+    </footer>
+</div>    
+</body>
+</html>
