@@ -41,6 +41,13 @@ module.exports = function(app, passport, mongoose) {
 		}	
     });
 
+	// Game page
+	app.get('/game', function(req, res) {
+		res.render('pages/game.ejs', {
+			user : req.user
+		});
+	});
+	
 	// About page
 	app.get('/about', function(req, res) {
 		res.render('pages/about.ejs');
@@ -55,14 +62,13 @@ module.exports = function(app, passport, mongoose) {
 
     // process the login form
     app.post('/login', passport.authenticate('local-login', {
-		successRedirect : '/profile',
+		successRedirect : '/',
 		failureRedirect : '/login',
 		failureFlash : true
 	}));
 
     // Signup form
     app.get('/signup', function(req, res) {
-
         // render the page and pass in any flash data if it exists
         res.render('pages/signup.ejs', { message: req.flash('signupMessage') });
     });
@@ -86,9 +92,6 @@ module.exports = function(app, passport, mongoose) {
     // Logout page
     app.get('/logout', function(req, res) {
 		req.session.destroy();
-//		mongoose.connection.db.collection('sessions', function (err, collection) {
-//			collection.remove({session : '/\//\"54f841ae33691467406e0c56\"/\//'}).exec();
-//		});
         res.redirect('/');
     });
 };
