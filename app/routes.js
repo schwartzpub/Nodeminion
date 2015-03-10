@@ -26,7 +26,7 @@ module.exports = function(app, passport, mongoose) {
 		
 		function userData(users, writeResults) {
 			return mongoose.connection.db.collection('users', function(err, collection) {
-				collection.find({ _id: { $in: users}}, {_id:0,'local.username':1}).toArray( function(err, results) {
+				collection.find({ _id: { $in: users}}, {_id:1,'local.username':1,'local.wins':1,'local.status':1,'local.gameid':1}).toArray( function(err, results) {
 					writeResults(results);
 				});
 			});
@@ -46,11 +46,6 @@ module.exports = function(app, passport, mongoose) {
 		res.render('pages/game.ejs', {
 			user : req.user
 		});
-	});
-	
-	// About page
-	app.get('/about', function(req, res) {
-		res.render('pages/about.ejs');
 	});
  
     // Login form

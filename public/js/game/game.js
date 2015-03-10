@@ -1,17 +1,15 @@
 var socket = io();
 
-document.addEventListener('DOMContentLoaded', function() {
-
+function chatInit(user) {
 	document.forms['private-lobby-form'].addEventListener('submit', function(e) {
 		e.preventDefault();
 		var timestamp = new Date().getTime();
-		var msg = [timestamp , <% if (typeof user !== "undefined" && user) { %> '[<%= user.local.username %>' <% } %> + "] " + document.getElementById('private-lobby-txt').value];
+		var msg = [timestamp , '[' + user + '] ' + document.getElementById('private-lobby-txt').value];
 		socket.emit('game message', msg);
 		document.getElementById('private-lobby-txt').value = '';
 		return false;
 	});
-	
-});
+};
 
 socket.on('game message', function(msg) {
 
@@ -22,3 +20,21 @@ socket.on('game message', function(msg) {
 	$('#private-lobby').append($('<li>').append("<span class='uk-text-muted uk-text-small'>" + timestamp + "</span>" + " " + msg[1]));
 	document.getElementById('private-lobby').scrollTop = document.getElementById('private-lobby').scrollHeight;
 });
+
+{
+	user : {
+		userid: 	,
+		username:	,
+		vp:			,
+		status:		,
+		gameid:		
+		},
+	game : {
+		gameid:		,
+		var1:		,
+		var2:		,
+		var3:		,
+		}
+}
+		
+		

@@ -4,6 +4,12 @@
 <head>
 	<% include ../partials/head %>
 	<script src="/js/game/game.js"></script>
+	<script>
+	var user = <% if (typeof user !== "undefined" && user) { %><%- '"' + String(user.local.username) + '"'%><% } %>;	
+	document.addEventListener('DOMContentLoaded', function() {
+		chatInit(user);		
+	});
+	</script>
 </head>
 <body>
 <div class="uk-container uk-container-center uk-margin-large-bottom">

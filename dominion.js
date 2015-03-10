@@ -33,9 +33,9 @@ app.use(cookieParser()); // read cookies (needed for auth)
 app.use(bodyParser()); // get information from html forms
 
 // set up passport
-app.use(session({ secret: 'pirateshitghostshit', cookie: { maxAge: 900000 }, store: new MongoStore({ mongooseConnection: mongoose.connection})})); // session secret
+app.use(session({ secret: 'pirateshitghostshit', cookie: { expires: new Date(Date.now() + 3600000) }, expires: new Date(Date.now() + 3600000), store: new MongoStore({ mongooseConnection: mongoose.connection})})); // session secret
 app.use(passport.initialize()); 
-app.use(passport.session( { cookie: { maxAge: 900000 }, store: new MongoStore({ mongooseConnection: mongoose.connection}) })); // persistent login sessions
+app.use(passport.session()); // persistent login sessions
 app.use(flash()); // use connect-flash for flash messages stored in session
 
 // set up routes
@@ -68,6 +68,7 @@ io.on('connection', function(socket) {
 			io.emit('game message', msg);
 		}
 	});
+	
 });
 
 server.listen(port);
