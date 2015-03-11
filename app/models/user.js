@@ -9,9 +9,9 @@ var userSchema = mongoose.Schema({
     local			: {
         username	: String,
         password	: String,
-		wins		: Number,
-		status		: Number,
-		gameid		: String
+	wins		: Number,
+	status		: Number,
+	gameid		: String
     }
 	
 });

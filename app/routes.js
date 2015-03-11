@@ -1,5 +1,5 @@
 var ObjectId = require('mongoose').Types.ObjectId;
-
+var User = require('../app/models/user');
 // app/routes.js
 module.exports = function(app, passport, mongoose) {
 

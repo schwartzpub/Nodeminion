@@ -1,6 +1,9 @@
 var socket = io();
 
 function chatInit(user) {
+
+	socket.emit('connect', user);
+
 	document.forms['private-lobby-form'].addEventListener('submit', function(e) {
 		e.preventDefault();
 		var timestamp = new Date().getTime();
