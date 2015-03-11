@@ -15,7 +15,24 @@ function addPlayer(userId,userName,leaderId){
 		$("#setupList").append('<li><i class="uk-icon-user-plus"></i> ' + userName + '</li>');
 		$("#playerCount").text('Create Game (' + playerList.length + ')');
 	}
+	
+	$("#gameButton").removeAttr('disabled');
 };
+
+function startGame(userId) {
+	var gameId = gameGenerate(8);
+	
+	socket.emit('start game', userId, gameId);
+
+};
+
+
+function gameGenerate(length) {
+	var chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    var result = '';
+    for (var i = length; i > 0; --i) result += chars[Math.round(Math.random() * (chars.length - 1))];
+    return result;
+}
 
 // Socket calls for lobby chat
 socket.on('chat message', function(msg) {
@@ -30,11 +47,22 @@ socket.on('chat message', function(msg) {
 
 // Socket calls to add users to a new game
 socket.on('user add alert', function(msg) {
-	alert("You've been added to a game, homie!");
+	alert("You've been added to a game!");
+	$('.player-button').each( function () {
+		$(this).attr('onclick','javaScript:void(0);');
+	});
 });
 
-socket.on('add alert', function(userid) {
-	$('#'+userid).css("color","#D7DF01");
+socket.on('add alert', function(userid,type) {
+	if (type === 1) {
+		$('#'+userid).css("color","#D7DF01");
+	} else if (type === 2) {
+		$('#'+userid).css("color","#B40404");
+	}
+});
+
+socket.on('join game', function(gameId) {
+	document.location = "/game/" + gameId;
 });
 
 // Socket calls to remove users from a game

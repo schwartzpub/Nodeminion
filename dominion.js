@@ -49,14 +49,25 @@ var gamelist = [];
 
 io.on('connection', function(socket) {
 
+	// record new user in list
 	socket.on('send user', function(msg) {
+		
 		sessionlist[msg] = socket;
+		for (var game in gamelist) {
+			if (gamelist[game].players.indexOf(msg) < 1 && gamelist[game].status === 0) {
+				console.log('no game');
+			} else {
+				socket.join(gamelist[game].gameid);
+			}
+		}
 	});
 
+	// send scrollback to new connection
 	for (i = 0; i < scrollback.length; i++) {
 		socket.emit('chat message', scrollback[i]);
 	};
 	
+	// public lobby chat
 	socket.on('chat message', function(msg) {
 		if (msg != "Invalid date") {	
 			io.emit('chat message', msg);
@@ -69,23 +80,41 @@ io.on('connection', function(socket) {
 		}
 	});
 	
-	socket.on('game message', function(msg) {
+	// in game chat
+	socket.on('get gameid', function() {
+		
+	});
+	
+	socket.on('game message', function(msg,gameId) {	
 		if (msg != "Invalid date") {	
-			io.emit('game message', msg);
+			io.to(gameId).emit('game message', msg);
 		}
 	});
 	
+	// Function to add player(s) to a new game. 
 	socket.on('add player', function(userid, username, leaderid) {
 		if (!(leaderid in gamelist)) {
 		
 			gamelist[leaderid] = {
+				gameid	: '',
 				players : [leaderid,userid],
 				winner 	: "none",
 				turn	: 0,
 				status	: 0 
 			};
 			
-			console.log(gamelist[leaderid]);
+			console.log(gamelist);
+			
+			User.findById(leaderid, function (err, document) {
+				if (err) { console.log(err); }
+				document.local.status = 1;
+				document.save( function(err) {
+					if (err) { console.log(err); }
+					return;
+				});
+			});
+			
+			io.emit('add alert', leaderid, 1);
 			
 		} else if (leaderid in gamelist) {
 			gamelist[leaderid].players.push(userid);
@@ -96,7 +125,7 @@ io.on('connection', function(socket) {
 			console.log('this user is: ' + userid);
 		} else {
 			sessionlist[userid].emit('user add alert');
-			io.emit('add alert', userid);
+			io.emit('add alert', userid, 1);
 			
 			User.findById(userid, function (err, document) {
 				if (err) { console.log(err); }
@@ -108,12 +137,34 @@ io.on('connection', function(socket) {
 			});
 		}
 	});
+	// start game 
+	socket.on('start game', function (userId, gameId) {
+		gamelist[userId].status = 1;
+		gamelist[userId].gameid = gameId;
+		console.log(gamelist);
+		for (var i = 0; i < gamelist[userId].players.length; i++) {
+			User.findById(gamelist[userId].players[i], function (err, document) {
+				if (err) { console.log(err); }
+				document.local.status = 2;
+				document.save( function(err) {
+					if (err) { console.log(err); }
+					return;
+				});
+			});
+			
+			io.emit('add alert', gamelist[userId].players[i], 2);
+			
+			sessionlist[gamelist[userId].players[i]].emit('join game', gameId);
+		}
+		
+	});
 	
+	// disconnect function, if a user was creating a game, it will remove everyone from the game so they don't get stuck
 	socket.on('disconnect', function() {
 		for (var player in sessionlist) {
 			if (sessionlist[player] === socket) {
 				for (var game in gamelist) {
-					if (game === player) {
+					if (game === player && gamelist[game].status === 0) {
 						for (var i = 0; i < gamelist[game].players.length; i++) {
 							User.findById(gamelist[game].players[i], function (err, document) {
 								if (err) { console.log(err); }
@@ -125,10 +176,12 @@ io.on('connection', function(socket) {
 							});
 							io.emit('reenable', gamelist[game].players[i]);
 						}
+						delete gamelist[game];
 					}
 				}
 			}
 		}
+		
 	});
 	
 });

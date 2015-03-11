@@ -5,9 +5,24 @@
 	<% include ../partials/head %>
 	<script src="/js/game/game.js"></script>
 	<script>
+	var socket = io();
+	var gameId = '<%- gameid %>';
 	var user = <% if (typeof user !== "undefined" && user) { %><%- '"' + String(user.local.username) + '"'%><% } %>;	
 	document.addEventListener('DOMContentLoaded', function() {
-		chatInit(user);		
+		<%if (typeof user !== "undefined" && user) { %>socket.emit('send user', '<%-user._id%>');<%} %>
+		socket.emit("get gameid");
+		socket.on('get gameid', function(gameid) {
+			console.log(gameid);
+			gameId = gameid;
+		});
+		document.forms['private-lobby-form'].addEventListener('submit', function(e) {
+			e.preventDefault();
+			var timestamp = new Date().getTime();
+			var msg = [timestamp , '[' + user + '] ' + document.getElementById('private-lobby-txt').value];
+			socket.emit('game message', msg, gameId);
+			document.getElementById('private-lobby-txt').value = '';
+			return false;
+		});
 	});
 	</script>
 </head>

@@ -27,9 +27,16 @@
 		<div class="uk-width-small-3-10">
 			<div class="uk-panel uk-panel-box uk-panel-box-secondary" style="min-height:150px;">
 				<h3 class="uk-panel-title" ><i class="uk-icon-flask"></i> <span id="playerCount">Create Game</span></h3>
-					<ul class="uk-list" id="setupList">
-					
-					</ul>
+					<div class="uk-grid">
+						<div class="uk-width-small-1-1" style="min-height:85px;">
+							<ul class="uk-list" id="setupList">
+							
+							</ul>
+						</div>
+						<div class="uk-width-small-1-1">
+							<button id="gameButton" onclick="startGame(<% if (user) {%>'<%-user._id%>'<%}%>);" class="uk-button uk-button-small" style="margin-bottom: 0px; float:right;" disabled><i class="uk-icon-spinner"></i> Start</button>
+						</div>
+					</div>
 			</div>
 		</div>
 		<div class="uk-width-small-1-1"><br/></div>
@@ -44,7 +51,15 @@
 			<div class="uk-panel uk-panel-box uk-panel-box-secondary">
 				<script>
 				var socket = io();
-				document.addEventListener('DOMContentLoaded', function() {			
+				document.addEventListener('DOMContentLoaded', function() {
+					document.forms['lobby-form'].addEventListener('submit', function(e) {
+						e.preventDefault();
+						var timestamp = new Date().getTime();
+						var msg = [timestamp , <% if (typeof user !== "undefined" && user) { %> '[<%= user.local.username %>' <% } %> + "] " + document.getElementById('lobby-txt').value];
+						socket.emit('chat message', msg);
+						document.getElementById('lobby-txt').value = '';
+						return false;
+					});
 					<%if (typeof user !== "undefined" && user) { %>socket.emit('send user', '<%-user._id%>');<%} %>
 				});
 				</script>

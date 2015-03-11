@@ -42,9 +42,10 @@ module.exports = function(app, passport, mongoose) {
     });
 
 	// Game page
-	app.get('/game', function(req, res) {
+	app.get('/game/:id', function(req, res) {
 		res.render('pages/game.ejs', {
-			user : req.user
+			user : req.user,
+			gameid : req.params.id
 		});
 	});
  
