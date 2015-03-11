@@ -21,6 +21,7 @@ var session = require('express-session');
 
 var MongoStore = require('connect-mongo')(session);
 var User = require('./app/models/user.js');
+var Game = require('./app/models/game.js');
 // set up socket.io
 var io = require('socket.io')(server);
 
@@ -81,10 +82,6 @@ io.on('connection', function(socket) {
 	});
 	
 	// in game chat
-	socket.on('get gameid', function() {
-		
-	});
-	
 	socket.on('game message', function(msg,gameId) {	
 		if (msg != "Invalid date") {	
 			io.to(gameId).emit('game message', msg);
@@ -137,15 +134,25 @@ io.on('connection', function(socket) {
 			});
 		}
 	});
+	
 	// start game 
 	socket.on('start game', function (userId, gameId) {
 		gamelist[userId].status = 1;
 		gamelist[userId].gameid = gameId;
 		console.log(gamelist);
+		
+		var newGame = new Game();
+		newGame.room = gameId;
+		newGame.status = 1;
+		newGame.winner = 'none';
+		
 		for (var i = 0; i < gamelist[userId].players.length; i++) {
 			User.findById(gamelist[userId].players[i], function (err, document) {
 				if (err) { console.log(err); }
 				document.local.status = 2;
+				
+				newGame.players.push({userid: document._id, name: document.local.username, status: document.local.status, vp: 0});
+				
 				document.save( function(err) {
 					if (err) { console.log(err); }
 					return;
@@ -157,6 +164,13 @@ io.on('connection', function(socket) {
 			sessionlist[gamelist[userId].players[i]].emit('join game', gameId);
 		}
 		
+		newGame.save( function(err) {
+			if (err)
+				throw err;
+			return ;
+		});
+		
+		console.log(newGame);
 	});
 	
 	// disconnect function, if a user was creating a game, it will remove everyone from the game so they don't get stuck
