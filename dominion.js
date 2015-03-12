@@ -22,6 +22,7 @@ var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 var User = require('./app/models/user.js');
 var Game = require('./app/models/game.js');
+
 // set up socket.io
 var io = require('socket.io')(server);
 
@@ -137,40 +138,51 @@ io.on('connection', function(socket) {
 	
 	// start game 
 	socket.on('start game', function (userId, gameId) {
-		gamelist[userId].status = 1;
-		gamelist[userId].gameid = gameId;
-		console.log(gamelist);
+
+		createGame(userId, gameId, createPlayer);		
+
+		function createGame(userId, gameId, createPlayer) {
+			gamelist[userId].status = 1;
+			gamelist[userId].gameid = gameId;
+			console.log(gamelist);
 		
-		var newGame = new Game();
-		newGame.room = gameId;
-		newGame.status = 1;
-		newGame.winner = 'none';
+			var newGame = new Game();
 		
-		for (var i = 0; i < gamelist[userId].players.length; i++) {
-			User.findById(gamelist[userId].players[i], function (err, document) {
-				if (err) { console.log(err); }
-				document.local.status = 2;
-				
-				newGame.players.push({userid: document._id, name: document.local.username, status: document.local.status, vp: 0});
-				
-				document.save( function(err) {
+			newGame.room = gameId;
+			newGame.status = 1;
+			newGame.winner = 'none';
+			newGame.players = [];
+		
+			for (var i = 0; i < gamelist[userId].players.length; i++) {
+				User.findById(gamelist[userId].players[i], function (err, document) {
 					if (err) { console.log(err); }
-					return;
+					document.local.status = 2;
+					document.save( function(err) {
+						if (err) { console.log(err); }
+					});
 				});
-			});
 			
-			io.emit('add alert', gamelist[userId].players[i], 2);
+				io.emit('add alert', gamelist[userId].players[i], 2);
 			
-			sessionlist[gamelist[userId].players[i]].emit('join game', gameId);
-		}
+				sessionlist[gamelist[userId].players[i]].emit('join game', gameId);
+			}
+
+			createPlayer(newGame, saveGame);
+		};
 		
-		newGame.save( function(err) {
-			if (err)
-				throw err;
-			return ;
-		});
+		function createPlayer(newGame, saveGame) {
+			for (var i = 0; i < gamelist[userId].players.length; i++) {
+				newGame.players.set(i, gamelist[userId].players[i]);
+				console.log(gamelist[userId].players[i] + " set...");
+			}
 		
-		console.log(newGame);
+			saveGame(newGame);
+		};
+
+		function saveGame(newGame) {
+			newGame.save();
+			console.log(newGame);
+		};
 	});
 	
 	// disconnect function, if a user was creating a game, it will remove everyone from the game so they don't get stuck
