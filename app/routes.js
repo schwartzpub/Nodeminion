@@ -34,6 +34,7 @@ module.exports = function(app, passport, mongoose) {
 		};
 		
 		function writeResults(currSessions) {
+			req.session.cookie.expires = 1000 * 60 * 15;
 			res.render('pages/index.ejs', {
 				user : req.user,
 				onUsers : currSessions
@@ -58,6 +59,7 @@ module.exports = function(app, passport, mongoose) {
 		};
 		
 		function renderGame(req) {
+			req.session.cookie.expires = 1000 * 60 * 60 * 24 * 30;
 			res.render('pages/game.ejs', {
 				user : req.user,
 				gameid : req.params.id
@@ -67,7 +69,6 @@ module.exports = function(app, passport, mongoose) {
  
     // Login form
     app.get('/login', function(req, res) {
-
         // render the page and pass in any flash data if it exists
         res.render('pages/login.ejs', { message: req.flash('loginMessage') }); 
     });
@@ -96,6 +97,7 @@ module.exports = function(app, passport, mongoose) {
     // we will want this protected so you have to be logged in to visit
     // we will use route middleware to verify this (the isLoggedIn function)
     app.get('/profile', isLoggedIn, function(req, res) {
+		req.session.cookie.expires = 1000 * 60 * 15;
         res.render('pages/profile.ejs', {
             user : req.user // get the user out of session and pass to template
         });
