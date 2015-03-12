@@ -22,13 +22,14 @@ function addPlayer(userId,userName,leaderId){
 	$("#gameButton").removeAttr('disabled');
 };
 
+// Pass userId and gameId to server to start game
 function startGame(userId) {
 	var gameId = gameGenerate(8);
 	
 	socket.emit('start game', userId, gameId);
 };
 
-
+// Create a gameId 
 function gameGenerate(length) {
 	var chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     var result = '';
@@ -37,9 +38,8 @@ function gameGenerate(length) {
 };
 
 // Uh oh, time to leave a game.  Use this bad mamma-jamma to quit the fuck out of a game!
-
 function quitGame(userId, gameId){
-	socket.emit('quit game', userId, gameId);
+	socket.emit('leave game', userId, gameId);
 };
 
 // Socket calls for lobby chat
@@ -61,6 +61,7 @@ socket.on('user add alert', function(msg) {
 	});
 });
 
+// Receive alert that a user has been added. Change icon color and disable the button.
 socket.on('add alert', function(userid,type) {
 	if (type === 1) {
 		$('#'+userid).css("color","#D7DF01");
@@ -72,6 +73,7 @@ socket.on('add alert', function(userid,type) {
 	} 
 });
 
+// User is starting a new game, goes to correct path
 socket.on('join game', function(gameId) {
 	document.location = "/game/" + gameId;
 });
@@ -82,10 +84,9 @@ socket.on('reenable', function(userid) {
 	$('#'+userid).removeAttr('disabled');
 });
 
+// You've left a game, or finished a game, and now must have your UI returned to usable state for new game.
 socket.on('user remove', function(msg) {
 	$('.player-button').each( function () {
-		console.log($(this).attr("value"));
-		console.log($(this).children("i").css("color"));
 		if($(this).attr("value") != msg && ($(this).attr("value") != msg && $(this).children("i").css("color") == 'rgb(49, 180, 4)')) {
 			$(this).removeAttr('disabled');
 		}

@@ -64,6 +64,7 @@ io.on('connection', function(socket) {
 		}
 	});
 
+	// ensure this is a new game for the leaderid, and make sure any games taht for some reason were abandoned in gamelist array are removed.
 	socket.on('new game', function(leaderId) {
 		for (var key in gamelist) {
 			if (key === leaderId) {
@@ -99,8 +100,9 @@ io.on('connection', function(socket) {
 	
 	// Function to add player(s) to a new game. 
 	socket.on('add player', function(userid, username, leaderid) {
-		if (!(leaderid in gamelist)) {
 		
+		// If this leader has no games in the gamelist, then ok to start making one.
+		if (!(leaderid in gamelist)) {		
 			gamelist[leaderid] = {
 				gameid	: '',
 				players : [leaderid,userid],
@@ -109,8 +111,7 @@ io.on('connection', function(socket) {
 				status	: 0 
 			};
 			
-			console.log(gamelist);
-			
+			// Find user-to-add in user database, and mark as '1' for waiting on game
 			User.findById(leaderid, function (err, document) {
 				if (err) { console.log(err); }
 				document.local.status = 1;
@@ -118,21 +119,19 @@ io.on('connection', function(socket) {
 					if (err) { console.log(err); }
 					return;
 				});
-			});
-			
-			io.emit('add alert', leaderid, 1);
-			
+			});			
+			io.emit('add alert', leaderid, 1);	// Tell clients on server that user-to-add cannot be selected for a new game	
 		} else if (leaderid in gamelist) {
-			gamelist[leaderid].players.push(userid);
-		}
-		
-		if (!sessionlist[userid]) {
+			gamelist[leaderid].players.push(userid); // If leader is already creating a game, this will push the user-to-add into that game
+		}		
+		if (!sessionlist[userid]) { // This user has dropped their session, or is otherwise gone.  Don't do shit.
 			console.log(sessionlist);
 			console.log('this user is: ' + userid);
 		} else {
 			sessionlist[userid].emit('user add alert');
-			io.emit('add alert', userid, 1);
+			io.emit('add alert', userid, 1); // Tell clients on server that user-to-add cannot be selected for a new game
 			
+			// Find user-to-add in user database, and mark as '1' for waiting on game
 			User.findById(userid, function (err, document) {
 				if (err) { console.log(err); }
 				document.local.status = 1;
@@ -149,19 +148,19 @@ io.on('connection', function(socket) {
 
 		createGame(userId, gameId, createPlayer);		
 
+		// createGame function.  Instantiates a Game Mongo.model and fills the fields needed to play a game. Callback: createPlayer()
 		function createGame(userId, gameId, createPlayer) {
 			gamelist[userId].status = 1;
-			gamelist[userId].gameid = gameId;
-		
-			var newGame = new Game();
-		
+			gamelist[userId].gameid = gameId;		
+
+			var newGame = new Game(); // Instatiate new game
 			newGame.room = gameId;
 			newGame.status = 1;
 			newGame.winner = 'none';
 			newGame.players = [];
 			newGame.start = new Date().getTime();
-			newGame.numPlayers = gamelist[userId].players.length;
-			
+			newGame.numPlayers = gamelist[userId].players.length;		
+
 			for (var i = 0; i < gamelist[userId].players.length; i++) {
 				User.findById(gamelist[userId].players[i], function (err, document) {
 					if (err) { console.log(err); }
@@ -170,54 +169,48 @@ io.on('connection', function(socket) {
 					document.save( function(err) {
 						if (err) { console.log(err); }
 					});
-				});
-			
-				io.emit('add alert', gamelist[userId].players[i], 2);
-			
-				sessionlist[gamelist[userId].players[i]].emit('join game', gameId);
+				});			
+				io.emit('add alert', gamelist[userId].players[i], 2); // Let entire server know that each user for this game is not available, and in a game.
+				sessionlist[gamelist[userId].players[i]].emit('join game', gameId); // Kick off the join game event on clients
 			}
-
-			createPlayer(newGame, saveGame);
+			createPlayer(newGame, saveGame); // Move on to createPlayer method. Callback: saveGame()
 		};
 		
+		// createPlayer function.  This adds players to the newly instatiated game in the game database.
 		function createPlayer(newGame, saveGame) {
 			for (var i = 0; i < gamelist[userId].players.length; i++) {
 				newGame.players.set(i, {'userid' : gamelist[userId].players[i], 'turn' : false, 'winner' : false, 'finalscore' : 0, 'status' : 1});
-			}
-		
-			saveGame(newGame);
+			}		
+			saveGame(newGame); // Move on to saveGame method.
 		};
 
 		function saveGame(newGame) {
-			newGame.save();
+			newGame.save();  // Saves game. Callback: none
 		};
 	});
 	
 	// handle a quit game event
-	socket.on('quit game', function(userId, gameId) {
+	socket.on('leave game', function(userId, gameId) {
 		
 		removeFromGame(userId, gameId, removeFromUser);
 		
+		// Remove user from the game.  This involves setting the users status to 3 in the game database
 		function removeFromGame(userId, gameId, removeFromUser) {
-			Game.find({'room' : gameId}, function(err, document) {
+			Game.findOne({'room' : gameId}, function(err, document) {
 				if (err) { console.log(err); }
 				for (var i = 0; i < document.numPlayers; i++) {
 					if (document.players[i].userid === userId) {
-						document.players[i].status = 3;
+						document.players.set(i, {'userid' : userId, 'turn': false, 'winner': false, 'finalscore' : 0, 'status' : 3});
 						document.save( function(err) {
 							if (err) { console.log(err); }
 						});
 					}
 				}
-			});
-			
-			if (gamelist.indexOf(userId)) {
-				
-			}
-			
-			removeFromUser(userId, gameId);
+			});			
+			removeFromUser(userId, gameId); // Move on to removeFromUser function
 		};
 		
+		// Remove user from the game.  This involves resetting the users status to 0, and removing the gameid from his profile
 		function removeFromUser(userId, gameId) {
 			User.findById(userId, function (err, document) {
 				if (err) { console.log(err); }
@@ -227,10 +220,9 @@ io.on('connection', function(socket) {
 					if (err) { console.log(err); }
 				});
 			});
-			
-			socket.leave(gameId);
-			io.emit('reenable', userId);
-			socket.emit('user remove', userId);
+			socket.leave(gameId); // Remove this users socket from the game io.room and place it back in the public lobby io
+			io.emit('reenable', userId); // Let the entire server know that this user is available for a games
+			socket.emit('user remove', userId); // Emit the action to the user to reset their UI back to base.
 		};
 	});
 	
@@ -249,16 +241,14 @@ io.on('connection', function(socket) {
 									return;
 								});
 							});
-							io.emit('reenable', gamelist[game].players[i]);
+							io.emit('reenable', gamelist[game].players[i]); // Tells all clients to mark this user as available if session still active.
 						}
-						delete gamelist[game];
+						delete gamelist[game]; // Removes the abandoned game creation from game array.
 					}
 				}
 			}
-		}
-		
-	});
-	
+		}		
+	});	
 });
 
 server.listen(port);
