@@ -64,6 +64,14 @@ io.on('connection', function(socket) {
 		}
 	});
 
+	socket.on('new game', function(leaderId) {
+		for (var key in gamelist) {
+			if (key === leaderId) {
+				delete gamelist[key];
+			}
+		}
+	});
+	
 	// send scrollback to new connection
 	for (i = 0; i < scrollback.length; i++) {
 		socket.emit('chat message', scrollback[i]);
@@ -144,7 +152,6 @@ io.on('connection', function(socket) {
 		function createGame(userId, gameId, createPlayer) {
 			gamelist[userId].status = 1;
 			gamelist[userId].gameid = gameId;
-			console.log(gamelist);
 		
 			var newGame = new Game();
 		
@@ -152,11 +159,14 @@ io.on('connection', function(socket) {
 			newGame.status = 1;
 			newGame.winner = 'none';
 			newGame.players = [];
-		
+			newGame.start = new Date().getTime();
+			newGame.numPlayers = gamelist[userId].players.length;
+			
 			for (var i = 0; i < gamelist[userId].players.length; i++) {
 				User.findById(gamelist[userId].players[i], function (err, document) {
 					if (err) { console.log(err); }
 					document.local.status = 2;
+					document.local.gameid = gameId;
 					document.save( function(err) {
 						if (err) { console.log(err); }
 					});
@@ -172,8 +182,7 @@ io.on('connection', function(socket) {
 		
 		function createPlayer(newGame, saveGame) {
 			for (var i = 0; i < gamelist[userId].players.length; i++) {
-				newGame.players.set(i, gamelist[userId].players[i]);
-				console.log(gamelist[userId].players[i] + " set...");
+				newGame.players.set(i, {'userid' : gamelist[userId].players[i], 'turn' : false, 'winner' : false, 'finalscore' : 0, 'status' : 1});
 			}
 		
 			saveGame(newGame);
@@ -181,7 +190,47 @@ io.on('connection', function(socket) {
 
 		function saveGame(newGame) {
 			newGame.save();
-			console.log(newGame);
+		};
+	});
+	
+	// handle a quit game event
+	socket.on('quit game', function(userId, gameId) {
+		
+		removeFromGame(userId, gameId, removeFromUser);
+		
+		function removeFromGame(userId, gameId, removeFromUser) {
+			Game.find({'room' : gameId}, function(err, document) {
+				if (err) { console.log(err); }
+				for (var i = 0; i < document.numPlayers; i++) {
+					if (document.players[i].userid === userId) {
+						document.players[i].status = 3;
+						document.save( function(err) {
+							if (err) { console.log(err); }
+						});
+					}
+				}
+			});
+			
+			if (gamelist.indexOf(userId)) {
+				
+			}
+			
+			removeFromUser(userId, gameId);
+		};
+		
+		function removeFromUser(userId, gameId) {
+			User.findById(userId, function (err, document) {
+				if (err) { console.log(err); }
+				document.local.status = 0;
+				document.local.gameid = '';
+				document.save( function (err) {
+					if (err) { console.log(err); }
+				});
+			});
+			
+			socket.leave(gameId);
+			io.emit('reenable', userId);
+			socket.emit('user remove', userId);
 		};
 	});
 	

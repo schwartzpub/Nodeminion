@@ -5,6 +5,9 @@ var socket = io();
 
 // Add player function that adds a player to the Create Game list
 function addPlayer(userId,userName,leaderId){
+	if (playerList.length === 0) {
+		socket.emit('new game', leaderId);
+	}
 
 	if (playerList.length <=4 && playerList.indexOf(userId) < 0) {
 		playerList.push(userId);
@@ -23,7 +26,6 @@ function startGame(userId) {
 	var gameId = gameGenerate(8);
 	
 	socket.emit('start game', userId, gameId);
-
 };
 
 
@@ -32,7 +34,13 @@ function gameGenerate(length) {
     var result = '';
     for (var i = length; i > 0; --i) result += chars[Math.round(Math.random() * (chars.length - 1))];
     return result;
-}
+};
+
+// Uh oh, time to leave a game.  Use this bad mamma-jamma to quit the fuck out of a game!
+
+function quitGame(userId, gameId){
+	socket.emit('quit game', userId, gameId);
+};
 
 // Socket calls for lobby chat
 socket.on('chat message', function(msg) {
@@ -49,16 +57,19 @@ socket.on('chat message', function(msg) {
 socket.on('user add alert', function(msg) {
 	alert("You've been added to a game!");
 	$('.player-button').each( function () {
-		$(this).attr('onclick','javaScript:void(0);');
+		$(this).attr('disabled');
 	});
 });
 
 socket.on('add alert', function(userid,type) {
 	if (type === 1) {
 		$('#'+userid).css("color","#D7DF01");
+		$('#'+userid).attr('disabled');
+		
 	} else if (type === 2) {
 		$('#'+userid).css("color","#B40404");
-	}
+		$('#'+userid).attr('disabled');
+	} 
 });
 
 socket.on('join game', function(gameId) {
@@ -68,4 +79,17 @@ socket.on('join game', function(gameId) {
 // Socket calls to remove users from a game
 socket.on('reenable', function(userid) {
 	$('#'+userid).css("color","#31B404");
+	$('#'+userid).removeAttr('disabled');
+});
+
+socket.on('user remove', function(msg) {
+	$('.player-button').each( function () {
+		console.log($(this).attr("value"));
+		console.log($(this).children("i").css("color"));
+		if($(this).attr("value") != msg && ($(this).attr("value") != msg && $(this).children("i").css("color") == 'rgb(49, 180, 4)')) {
+			$(this).removeAttr('disabled');
+		}
+	});
+	$('#inGameAlert').remove();
+	location.reload;
 });

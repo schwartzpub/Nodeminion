@@ -42,11 +42,27 @@ module.exports = function(app, passport, mongoose) {
     });
 
 	// Game page
-	app.get('/game/:id', function(req, res) {
-		res.render('pages/game.ejs', {
-			user : req.user,
-			gameid : req.params.id
-		});
+	app.get('/game/:id', isLoggedIn, function(req, res) {
+	
+		userGame(req, renderGame);
+		
+		function userGame(req, renderGame) {
+			User.findById(req.user._id, function(err, document) {
+				if (err) { console.log(err); }
+				if (req.user.local.gameid === req.params.id && req.user.local.status === 2) {
+					renderGame(req);
+				} else {
+					res.redirect('/');
+				}
+			});
+		};
+		
+		function renderGame(req) {
+			res.render('pages/game.ejs', {
+				user : req.user,
+				gameid : req.params.id
+			});
+		};
 	});
  
     // Login form

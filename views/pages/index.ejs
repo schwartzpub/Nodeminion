@@ -13,7 +13,16 @@
 
     <main>
 	<div class="uk-grid uk-margin-top">
-		<div class="uk-width-small-1-1"><br/></div>
+		<%
+			if (typeof user !== "undefined" && user && user.local.status === 2) {
+				%>
+				<div id="inGameAlert" class="uk-alert uk-alert-danger" style="margin: 0 auto;">
+					<p>You are currently in a game: <a href="/game/<%-user.local.gameid%>">Join Game</a> or <a onclick="quitGame('<%-user._id%>','<%-user.local.gameid%>');">Leave Game</a>.</p>
+				</div>
+				<%
+			}
+		%>
+		<div class="uk-width-small-1-1 uk-margin-top"></div>
 		<div class="uk-width-small-7-10">
 			<div class="uk-panel uk-panel-box uk-panel-box-secondary" style="min-height:150px;">
 				<h3 class="uk-panel-title"><i class="uk-icon-group"></i> Current Players</h3>
