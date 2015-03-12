@@ -2,7 +2,6 @@ var playerList = [];
 var gameList = [];
 var socket = io();
 
-
 // Add player function that adds a player to the Create Game list
 function addPlayer(userId,userName,leaderId){
 	if (playerList.length === 0) {
@@ -66,10 +65,12 @@ socket.on('add alert', function(userid,type) {
 	if (type === 1) {
 		$('#'+userid).css("color","#D7DF01");
 		$('#'+userid).attr('disabled');
+		$('#'+userid).parent().attr("status", "1");
 		
 	} else if (type === 2) {
 		$('#'+userid).css("color","#B40404");
 		$('#'+userid).attr('disabled');
+		$('#'+userid).parent().attr("status", "2");
 	} 
 });
 
@@ -81,13 +82,15 @@ socket.on('join game', function(gameId) {
 // Socket calls to remove users from a game
 socket.on('reenable', function(userid) {
 	$('#'+userid).css("color","#31B404");
-	$('#'+userid).removeAttr('disabled');
+	if (!($('#'+userid).parent().attr("value") === myUserId)) {
+		$('#'+userid).parent().removeAttr('disabled');
+	}
 });
 
 // You've left a game, or finished a game, and now must have your UI returned to usable state for new game.
 socket.on('user remove', function(msg) {
 	$('.player-button').each( function () {
-		if($(this).attr("value") != msg && ($(this).attr("value") != msg && $(this).children("i").css("color") == 'rgb(49, 180, 4)')) {
+		if($(this).attr("value") != msg && $(this).attr("status") === "0") {
 			$(this).removeAttr('disabled');
 		}
 	});
