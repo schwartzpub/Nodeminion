@@ -1,11 +1,14 @@
 var playerList = [];
+var accepted = 0;
 var gameList = [];
 var socket = io();
+var acceptTimeout;
 
 // Add player function that adds a player to the Create Game list
 function addPlayer(userId,userName,leaderId){
 	if (playerList.length === 0) {
 		socket.emit('new game', leaderId);
+		$('#startIcon').toggleClass('uk-icon-spin');
 	}
 
 	if (playerList.length <=4 && playerList.indexOf(userId) < 0) {
@@ -14,11 +17,9 @@ function addPlayer(userId,userName,leaderId){
 		
 		socket.emit('add player', userId, userName, leaderId);
 		
-		$("#setupList").append('<li><i class="uk-icon-user-plus"></i> ' + userName + '</li>');
+		$("#setupList").append('<li id="'+userId+'-li"><i id="' + userId + '-icon" class="uk-icon-circle-o-notch uk-icon-spin"></i> ' + userName + '</li>');
 		$("#playerCount").text('Create Game (' + playerList.length + ')');
 	}
-	
-	$("#gameButton").removeAttr('disabled');
 };
 
 // Pass userId and gameId to server to start game
@@ -53,24 +54,113 @@ socket.on('chat message', function(msg) {
 
 
 // Socket calls to add users to a new game
-socket.on('user add alert', function(msg) {
-	alert("You've been added to a game!");
-	$('.player-button').each( function () {
-		$(this).attr('disabled');
+socket.on('user add alert', function(leaderid,leader) {
+	var acceptModal = new UIkit.modal("#acceptModal", {bgclose:false});
+	var timer = 30;
+	acceptModal.show();
+	$("#leaderName").text(leader);
+	document.getElementById('chirp').play();
+	
+	acceptTimeout = setTimeout( function() {
+		socket.emit('decline game', leaderid, myUserId);
+		socket.emit('reset user', myUserId);
+		acceptModal.hide();
+		clearInterval(countDown);
+		$(document).prop('title', 'Nodeminion');
+		return true;
+	}, 30000);
+
+	var countDown = setInterval( function () {
+		timer -= 1;
+		$("#countDown").text(timer);
+		if ($(document).prop('title') === 'Nodeminion') {
+			$(document).prop('title', '( ! )Nodeminion');
+		} else {
+			$(document).prop('title', 'Nodeminion');
+		}
+	}, 1000);
+	
+	$('#acceptButton').on('click', function () {
+		clearTimeout(acceptTimeout);
+		socket.emit('accept game', leaderid, myUserId);
+		$('.player-button').each( function () {
+			$(this).attr('disabled');
+		});
+		acceptModal.hide();
+		clearInterval(countDown);
+		$(document).prop('title', 'Nodeminion');
+		return true;
 	});
+	
+	$('#declineButton').on('click', function () {
+		clearTimeout(acceptTimeout);
+		socket.emit('decline game', leaderid, myUserId);
+		socket.emit('reset user', myUserId);
+		acceptModal.hide();
+		clearInterval(countDown);
+		$(document).prop('title', 'Nodeminion');
+		return true;
+	});
+});
+
+// Socket calls for response to user additions
+socket.on('accepted', function(userId) {
+	$('#'+userId+'-icon').attr('class', 'uk-icon-user-plus');
+	accepted += 1;
+	
+	if (playerList.length === accepted) {
+		$("#gameButton").removeAttr('disabled');
+	}
+});
+
+socket.on('declined', function(userId) {
+	splicePlayerList(userId, spliceGameList);
+	
+	function splicePlayerList(userId, spliceGameList) {
+		for (var id in playerList) {
+			if (playerList[id] == userId) {
+				playerList.splice(id,1);
+			}
+		}
+		spliceGameList(userId, resetUI);
+	};
+	
+	function spliceGameList(userId, resetUI) {
+		for (var id in gameList) {
+			if (gameList[id] == userId) {
+				gameList.splice(id,1);
+			}
+		}
+		
+		resetUI(userId);
+	};
+	
+	function resetUI(userId) {
+		$('#'+userId+'-li').remove();
+		if (playerList.length < 2) {
+			$("#playerCount").text('Create Game');
+			$('#startIcon').toggleClass('uk-icon-spin');
+			$("#gameButton").attr('disabled', true);
+			playerList = [];
+			gameList = [];
+			socket.emit('reset user', myUserId);
+		} else {
+			$("#playerCount").text('Create Game (' + playerList.length + ')');
+		}
+	};
 });
 
 // Receive alert that a user has been added. Change icon color and disable the button.
 socket.on('add alert', function(userid,type) {
 	if (type === 1) {
-		$('#'+userid).css("color","#D7DF01");
-		$('#'+userid).attr('disabled');
-		$('#'+userid).parent().attr("status", "1");
+		$('#'+userid+'-plicon').css("color","#D7DF01");
+		$('#'+userid+'-plbutton').attr('disabled', true);
+		$('#'+userid+'-plicon').parent().attr("status", "1");
 		
 	} else if (type === 2) {
-		$('#'+userid).css("color","#B40404");
-		$('#'+userid).attr('disabled');
-		$('#'+userid).parent().attr("status", "2");
+		$('#'+userid+'-plicon').css("color","#B40404");
+		$('#'+userid+'-plbutton').attr('disabled', true);
+		$('#'+userid+'-plicon').parent().attr("status", "2");
 	} 
 });
 
@@ -81,16 +171,18 @@ socket.on('join game', function(gameId) {
 
 // Socket calls to remove users from a game
 socket.on('reenable', function(userid) {
-	$('#'+userid).css("color","#31B404");
-	if (!($('#'+userid).parent().attr("value") === myUserId)) {
-		$('#'+userid).parent().removeAttr('disabled');
+	$('#'+userid+'-plicon').css("color","#31B404");
+	$('#'+userid+'-plbutton').attr('status', '0');
+	$('#'+userid+'-plicon').css("color","#31B404");
+	if (!(userid === myUserId) && $('#'+userid+'-plbutton').attr('status') === "0") {
+		$('#'+userid+'-plbutton').removeAttr('disabled');
 	}
 });
 
 // You've left a game, or finished a game, and now must have your UI returned to usable state for new game.
-socket.on('user remove', function(msg) {
+socket.on('user remove', function(userId) {
 	$('.player-button').each( function () {
-		if($(this).attr("value") != msg && $(this).attr("status") === "0") {
+		if($(this).attr("value") !== userId && $(this).attr("status") === "0") {
 			$(this).removeAttr('disabled');
 		}
 	});

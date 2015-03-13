@@ -22,6 +22,26 @@
 				<%
 			}
 		%>
+		<div class="uk-modal" id="acceptModal">
+			<div class="uk-modal-dialog">
+				<div class="uk-grid">
+					<div class="uk-width-1-6"></div>
+					<div class="uk-width-4-6">
+						<h3 class="uk-text-center">Dominion Game Starting!</h3>
+						<h4 class="uk-text-center"><span id="leaderName"></span> has invited you to a game! <br> You have <span id="countDown">30</span>s to accept!</h4>
+					</div>
+					<div class="uk-width-1-6"></div>
+					<div class="uk-width-1-6"></div>
+					<div class="uk-width-4-6">
+						<div class="uk-button-group" style="margin-left: 115px">
+							<button id="acceptButton" class="uk-button uk-button-success">Accept</button>
+							<button id="declineButton" class="uk-button uk-button-danger">Decline</button>
+						</div>
+					</div>
+					<div class="uk-width-1-6""></div>
+				</div>
+			</div>
+		</div>
 		<div class="uk-width-small-1-1 uk-margin-top"></div>
 		<div class="uk-width-small-7-10">
 			<div class="uk-panel uk-panel-box uk-panel-box-secondary" style="min-height:150px;">
@@ -44,7 +64,7 @@
 							</ul>
 						</div>
 						<div class="uk-width-small-1-1">
-							<button id="gameButton" onclick="startGame(<% if (user) {%>'<%-user._id%>'<%}%>);" class="uk-button uk-button-small" style="margin-bottom: 0px; float:right;" disabled><i class="uk-icon-spinner"></i> Start</button>
+							<button id="gameButton" onclick="startGame(<% if (user) {%>'<%-user._id%>'<%}%>);" class="uk-button uk-button-small" style="margin-bottom: 0px; float:right;" disabled><i id="startIcon" class="uk-icon-spinner"></i> Start</button>
 						</div>
 					</div>
 			</div>
@@ -62,6 +82,7 @@
 				<script>
 				var socket = io();
 				document.addEventListener('DOMContentLoaded', function() {
+					$("#gameButton").attr('disabled', true);
 					document.forms['lobby-form'].addEventListener('submit', function(e) {
 						e.preventDefault();
 						var timestamp = new Date().getTime();

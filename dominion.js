@@ -51,6 +51,12 @@ var gamelist = [];
 
 io.on('connection', function(socket) {
 
+	// ===============================================================================================
+	// USER HANDLING SOCKET METHODS
+	//   These methods all handle user handling and game creation.  These are not for socket transfer 
+	//   to the actual game, or for game mechanics.
+	// ===============================================================================================
+
 	// record new user in list
 	socket.on('send user', function(msg) {
 		
@@ -64,6 +70,34 @@ io.on('connection', function(socket) {
 		}
 	});
 
+	// resets user back to default state
+	socket.on('reset user', function(userId) {
+	
+		resetUserDB(userId, resetUserUI);
+	
+		function resetUserDB(userId, resetUserUI) {
+			User.findById(userId, function (err, document) {
+				if (err) { console.log(err); }
+				document.local.status = 0;
+				document.local.gameid = '';
+				document.save( function (err) {
+					if (err) { console.log(err); }
+				});
+			});		
+			resetUserUI(userId, resetClients);
+		};
+	
+		function resetUserUI(userId, resetClients) {
+			socket.emit('user remove', userId);		
+			resetClients(userId);
+		};
+		
+		function resetClients(userId) {
+			io.emit('reenable', userId);
+		};
+	
+	});
+	
 	// ensure this is a new game for the leaderid, and make sure any games taht for some reason were abandoned in gamelist array are removed.
 	socket.on('new game', function(leaderId) {
 		for (var key in gamelist) {
@@ -101,46 +135,65 @@ io.on('connection', function(socket) {
 	// Function to add player(s) to a new game. 
 	socket.on('add player', function(userid, username, leaderid) {
 		
+		setupLeader(userid, username, leaderid, setupPlayer);
+		
 		// If this leader has no games in the gamelist, then ok to start making one.
-		if (!(leaderid in gamelist)) {		
-			gamelist[leaderid] = {
-				gameid	: '',
-				players : [leaderid,userid],
-				winner 	: "none",
-				turn	: 0,
-				status	: 0 
-			};
-			
-			// Find user-to-add in user database, and mark as '1' for waiting on game
-			User.findById(leaderid, function (err, document) {
-				if (err) { console.log(err); }
-				document.local.status = 1;
-				document.save( function(err) {
+		function setupLeader (userid, username, leaderid, setupPlayer) {
+			if (!(leaderid in gamelist)) {		
+				gamelist[leaderid] = {
+					gameid	: '',
+					players : [leaderid,userid],
+					winner 	: "none",
+					turn	: 0,
+					status	: 0 
+				};
+				
+				// Find leader in user database, and mark as '1' for waiting on game
+				User.findById(leaderid, function (err, document) {
 					if (err) { console.log(err); }
-					return;
-				});
-			});			
-			io.emit('add alert', leaderid, 1);	// Tell clients on server that user-to-add cannot be selected for a new game	
-		} else if (leaderid in gamelist) {
-			gamelist[leaderid].players.push(userid); // If leader is already creating a game, this will push the user-to-add into that game
-		}		
-		if (!sessionlist[userid]) { // This user has dropped their session, or is otherwise gone.  Don't do shit.
-			console.log(sessionlist);
-			console.log('this user is: ' + userid);
-		} else {
-			sessionlist[userid].emit('user add alert');
-			io.emit('add alert', userid, 1); // Tell clients on server that user-to-add cannot be selected for a new game
-			
-			// Find user-to-add in user database, and mark as '1' for waiting on game
-			User.findById(userid, function (err, document) {
-				if (err) { console.log(err); }
-				document.local.status = 1;
-				document.save( function(err) {
+					document.local.status = 1;
+					var leader = document.local.username;
+					document.save( function(err) {
+						if (err) { console.log(err); }
+						io.emit('add alert', leaderid, 1);	// Tell clients on server that user-to-add cannot be selected for a new game	
+						setupPlayer(userid, username, leaderid, leader);
+					});
+				});	
+				
+			} else if (leaderid in gamelist) {
+				gamelist[leaderid].players.push(userid); // If leader is already creating a game, this will push the user-to-add into that game
+				setupPlayer(userid, username, leaderid, leader);
+			}
+		};
+		
+		function setupPlayer (userid, username, leaderid, leader) {
+			if (!sessionlist[userid]) { // This user has dropped their session, or is otherwise gone.  Don't do shit.
+				console.log(sessionlist);
+				console.log('this user is: ' + userid);
+			} else {
+				sessionlist[userid].emit('user add alert', leaderid, leader);
+				io.emit('add alert', userid, 1); // Tell clients on server that user-to-add cannot be selected for a new game
+				
+				// Find user-to-add in user database, and mark as '1' for waiting on game
+				User.findById(userid, function (err, document) {
 					if (err) { console.log(err); }
-					return;
+					document.local.status = 1;
+					document.save( function(err) {
+						if (err) { console.log(err); }
+						return;
+					});
 				});
-			});
-		}
+			}
+			return;
+		};
+	});
+	
+	socket.on('accept game', function(leaderid, userid) {
+		sessionlist[leaderid].emit('accepted', userid);
+	});
+	
+	socket.on('decline game', function(leaderid, userid) {
+		sessionlist[leaderid].emit('declined', userid);
 	});
 	
 	// start game 
@@ -241,7 +294,7 @@ io.on('connection', function(socket) {
 									return;
 								});
 							});
-							io.emit('reenable', gamelist[game].players[i]); // Tells all clients to mark this user as available if session still active.
+							io.emit('reenable', player); // Tells all clients to mark this user as available if session still active.
 						}
 						delete gamelist[game]; // Removes the abandoned game creation from game array.
 					}
