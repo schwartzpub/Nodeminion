@@ -38,8 +38,24 @@ function gameGenerate(length) {
 };
 
 // Uh oh, time to leave a game.  Use this bad mamma-jamma to quit the fuck out of a game!
-function quitGame(userId, gameId){
+function quitGame(userId, gameId) {
 	socket.emit('leave game', userId, gameId);
+};
+
+// Cancel game before starting one...
+function cancelGame() {
+	for ( var i in playerList ) socket.emit('reset user', playerList[i]);
+	$('#setupList').children().remove();
+	playerList = [];
+	gameList = [];
+	accepted = 0;
+	$("#playerCount").text('Create Game');
+	$('#startIcon').toggleClass('uk-icon-spin');
+	$("#gameButton").prop('disabled', true);
+	$("#cancelButton").prop('disabled', true);
+	playerList = [];
+	gameList = [];
+	socket.emit('reset user', myUserId);
 };
 
 // Socket calls for lobby chat
@@ -84,7 +100,7 @@ socket.on('user add alert', function(leaderid,leader) {
 		clearTimeout(acceptTimeout);
 		socket.emit('accept game', leaderid, myUserId);
 		$('.player-button').each( function () {
-			$(this).attr('disabled');
+			$(this).prop('disabled', true);
 		});
 		acceptModal.hide();
 		clearInterval(countDown);
@@ -107,9 +123,10 @@ socket.on('user add alert', function(leaderid,leader) {
 socket.on('accepted', function(userId) {
 	$('#'+userId+'-icon').attr('class', 'uk-icon-user-plus');
 	accepted += 1;
-	
+	console.log("playerlist: " + playerList.length + " ... accepted: " + accepted);
 	if (playerList.length === accepted) {
-		$("#gameButton").removeAttr('disabled');
+		$("#gameButton").prop('disabled', false);
+		$("#cancelButton").prop('disabled', false);
 	}
 });
 
@@ -140,9 +157,10 @@ socket.on('declined', function(userId) {
 		if (playerList.length < 2) {
 			$("#playerCount").text('Create Game');
 			$('#startIcon').toggleClass('uk-icon-spin');
-			$("#gameButton").attr('disabled', true);
+			$("#gameButton").prop('disabled', true);
 			playerList = [];
 			gameList = [];
+			accepted = 0;
 			socket.emit('reset user', myUserId);
 		} else {
 			$("#playerCount").text('Create Game (' + playerList.length + ')');
@@ -154,12 +172,12 @@ socket.on('declined', function(userId) {
 socket.on('add alert', function(userid,type) {
 	if (type === 1) {
 		$('#'+userid+'-plicon').css("color","#D7DF01");
-		$('#'+userid+'-plbutton').attr('disabled', true);
+		$('#'+userid+'-plbutton').prop('disabled', true);
 		$('#'+userid+'-plicon').parent().attr("status", "1");
 		
 	} else if (type === 2) {
 		$('#'+userid+'-plicon').css("color","#B40404");
-		$('#'+userid+'-plbutton').attr('disabled', true);
+		$('#'+userid+'-plbutton').prop('disabled', true);
 		$('#'+userid+'-plicon').parent().attr("status", "2");
 	} 
 });
@@ -175,7 +193,7 @@ socket.on('reenable', function(userid) {
 	$('#'+userid+'-plbutton').attr('status', '0');
 	$('#'+userid+'-plicon').css("color","#31B404");
 	if (!(userid === myUserId) && $('#'+userid+'-plbutton').attr('status') === "0") {
-		$('#'+userid+'-plbutton').removeAttr('disabled');
+		$('#'+userid+'-plbutton').prop('disabled', false);
 	}
 });
 
@@ -183,7 +201,7 @@ socket.on('reenable', function(userid) {
 socket.on('user remove', function(userId) {
 	$('.player-button').each( function () {
 		if($(this).attr("value") !== userId && $(this).attr("status") === "0") {
-			$(this).removeAttr('disabled');
+			$(this).prop('disabled', false);
 		}
 	});
 	$('#inGameAlert').remove();

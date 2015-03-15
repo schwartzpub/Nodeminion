@@ -38,7 +38,7 @@
 							<button id="declineButton" class="uk-button uk-button-danger">Decline</button>
 						</div>
 					</div>
-					<div class="uk-width-1-6""></div>
+					<div class="uk-width-1-6"></div>
 				</div>
 			</div>
 		</div>
@@ -64,7 +64,8 @@
 							</ul>
 						</div>
 						<div class="uk-width-small-1-1">
-							<button id="gameButton" onclick="startGame(<% if (user) {%>'<%-user._id%>'<%}%>);" class="uk-button uk-button-small" style="margin-bottom: 0px; float:right;" disabled><i id="startIcon" class="uk-icon-spinner"></i> Start</button>
+							<button id="cancelButton" onclick="cancelGame(<% if (user) {%>'<%-user._id%>'<%}%>);" class="uk-button uk-button-small uk-button-danger" style="margin-bottom: 0px; float:right;" disabled><i id="cancelIcon" class="uk-icon-times"></i> Cancel</button>
+							<button id="gameButton" onclick="startGame(<% if (user) {%>'<%-user._id%>'<%}%>);" class="uk-button uk-button-small uk-button-success" style="margin-bottom: 0px; float:right;" disabled><i id="startIcon" class="uk-icon-spinner"></i> Start</button>
 						</div>
 					</div>
 			</div>

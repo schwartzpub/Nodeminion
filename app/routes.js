@@ -108,6 +108,10 @@ module.exports = function(app, passport, mongoose) {
 		req.session.destroy();
         res.redirect('/');
     });
+	
+	app.get('*', function(req, res){
+	  res.redirect('/');
+	});
 };
 
 // route middleware to make sure a user is logged in

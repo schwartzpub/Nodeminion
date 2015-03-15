@@ -9,7 +9,10 @@ var userSchema = mongoose.Schema({
     local			: {
     username	: String,
     password	: String,
+	gamesplayed	: Number,
 	wins		: Number,
+	ties		: Number,
+	losses		: Number,
 	status		: Number,
 	gameid		: String
     }

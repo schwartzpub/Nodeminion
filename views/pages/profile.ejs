@@ -22,10 +22,12 @@
 						<a href="/logout" class="uk-button uk-button-small">Logout</a>
 						<hr>
 						<ul class="uk-list">
-							<li><strong>ID</strong>: <%= user._id %><br></li>
 							<li><strong>Username</strong>: <%= user.local.username %><br></li>
 							<li><strong>Wins</strong>: <%= user.local.wins %></li>
+							<li><strong>Ties</strong>: <%= user.local.ties %></li>
+							<li><strong>Losses</strong>: <%= user.local.losses %></li>
 							<li><strong>Status</strong>: <%= user.local.status %></li>
+							<li><strong>Current Game</strong>: <%= user.local.gameid %></li>
 						</ul>
 					</div>
 				</div>
