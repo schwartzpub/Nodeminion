@@ -64,9 +64,9 @@ module.exports = function(passport) {
                 // set the user's local credentials
                 newUser.local.username = username;
                 newUser.local.password = newUser.generateHash(password);
-				newUser.local.wins = 0;
-				newUser.local.status = 0;
-				newUser.local.gameid = "";
+        newUser.local.wins = 0;
+        newUser.local.status = 0;
+        newUser.local.gameid = "";
 
                 // save the user
                 newUser.save(function(err) {
@@ -81,8 +81,8 @@ module.exports = function(passport) {
         });
 
     }));
-	
-	// =========================================================================
+  
+  // =========================================================================
     // LOCAL LOGIN =============================================================
     // =========================================================================
     // we are using named strategies since we have one for login and one for signup

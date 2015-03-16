@@ -8,113 +8,113 @@
 <body>
 <div class="uk-container uk-container-center uk-margin-large-bottom">
     <header>
-		<% include ../partials/header %>
+    <% include ../partials/header %>
     </header>
 
     <main>
-	<div class="uk-grid uk-margin-top">
-		<%
-			if (typeof user !== "undefined" && user && user.local.status === 2) {
-				%>
-				<div id="inGameAlert" class="uk-alert uk-alert-danger" style="margin: 0 auto;">
-					<p>You are currently in a game: <a href="/game/<%-user.local.gameid%>">Join Game</a> or <a onclick="quitGame('<%-user._id%>','<%-user.local.gameid%>');">Leave Game</a>.</p>
-				</div>
-				<%
-			}
-		%>
-		<div class="uk-modal" id="acceptModal">
-			<div class="uk-modal-dialog">
-				<div class="uk-grid">
-					<div class="uk-width-1-6"></div>
-					<div class="uk-width-4-6">
-						<h3 class="uk-text-center">Dominion Game Starting!</h3>
-						<h4 class="uk-text-center"><span id="leaderName"></span> has invited you to a game! <br> You have <span id="countDown">30</span>s to accept!</h4>
-					</div>
-					<div class="uk-width-1-6"></div>
-					<div class="uk-width-1-6"></div>
-					<div class="uk-width-4-6">
-						<div class="uk-button-group" style="margin-left: 115px">
-							<button id="acceptButton" class="uk-button uk-button-success">Accept</button>
-							<button id="declineButton" class="uk-button uk-button-danger">Decline</button>
-						</div>
-					</div>
-					<div class="uk-width-1-6"></div>
-				</div>
-			</div>
-		</div>
-		<div class="uk-width-small-1-1 uk-margin-top"></div>
-		<div class="uk-width-small-7-10">
-			<div class="uk-panel uk-panel-box uk-panel-box-secondary" style="min-height:150px;">
-				<h3 class="uk-panel-title"><i class="uk-icon-group"></i> Current Players</h3>
-					<script> var myUserId = <% if (user) {%>'<%-user._id%>'<%}%>;</script>
-					<script src="/js/game/lobby.js"></script>
+  <div class="uk-grid uk-margin-top">
+    <%
+      if (typeof user !== "undefined" && user && user.local.status === 2) {
+        %>
+        <div id="inGameAlert" class="uk-alert uk-alert-danger" style="margin: 0 auto;">
+          <p>You are currently in a game: <a href="/game/<%-user.local.gameid%>">Join Game</a> or <a onclick="quitGame('<%-user._id%>','<%-user.local.gameid%>');">Leave Game</a>.</p>
+        </div>
+        <%
+      }
+    %>
+    <div class="uk-modal" id="acceptModal">
+      <div class="uk-modal-dialog">
+        <div class="uk-grid">
+          <div class="uk-width-1-6"></div>
+          <div class="uk-width-4-6">
+            <h3 class="uk-text-center">Dominion Game Starting!</h3>
+            <h4 class="uk-text-center"><span id="leaderName"></span> has invited you to a game! <br> You have <span id="countDown">30</span>s to accept!</h4>
+          </div>
+          <div class="uk-width-1-6"></div>
+          <div class="uk-width-1-6"></div>
+          <div class="uk-width-4-6">
+            <div class="uk-button-group" style="margin-left: 115px">
+              <button id="acceptButton" class="uk-button uk-button-success">Accept</button>
+              <button id="declineButton" class="uk-button uk-button-danger">Decline</button>
+            </div>
+          </div>
+          <div class="uk-width-1-6"></div>
+        </div>
+      </div>
+    </div>
+    <div class="uk-width-small-1-1 uk-margin-top"></div>
+    <div class="uk-width-small-7-10">
+      <div class="uk-panel uk-panel-box uk-panel-box-secondary" style="min-height:150px;">
+        <h3 class="uk-panel-title"><i class="uk-icon-group"></i> Current Players</h3>
+          <script> var myUserId = <% if (user) {%>'<%-user._id%>'<%}%>;</script>
+          <script src="/js/game/lobby.js"></script>
 
-					<table>
-					<% include ../partials/players %>
-					</table>
-			</div>
-		</div>
-		<div class="uk-width-small-3-10">
-			<div class="uk-panel uk-panel-box uk-panel-box-secondary" style="min-height:150px;">
-				<h3 class="uk-panel-title" ><i class="uk-icon-flask"></i> <span id="playerCount">Create Game</span></h3>
-					<div class="uk-grid">
-						<div class="uk-width-small-1-1" style="min-height:85px;">
-							<ul class="uk-list" id="setupList">
-							
-							</ul>
-						</div>
-						<div class="uk-width-small-1-1">
-							<button id="cancelButton" onclick="cancelGame(<% if (user) {%>'<%-user._id%>'<%}%>);" class="uk-button uk-button-small uk-button-danger" style="margin-bottom: 0px; float:right;" disabled><i id="cancelIcon" class="uk-icon-times"></i> Cancel</button>
-							<button id="gameButton" onclick="startGame(<% if (user) {%>'<%-user._id%>'<%}%>);" class="uk-button uk-button-small uk-button-success" style="margin-bottom: 0px; float:right;" disabled><i id="startIcon" class="uk-icon-spinner"></i> Start</button>
-						</div>
-					</div>
-			</div>
-		</div>
-		<div class="uk-width-small-1-1"><br/></div>
-		<div class="uk-width-small-1-1">
-			<div class="uk-panel uk-panel-box uk-panel-box-secondary">
-				<h3 class="uk-panel-title"><i class="uk-icon-laptop"></i> Current Games</h2>
-				No current games
-			</div>
-		</div>
-		<div class="uk-width-small-1-1"><br/></div>
-		<div class="uk-width-small-1-1">
-			<div class="uk-panel uk-panel-box uk-panel-box-secondary">
-				<script>
-				var socket = io();
-				document.addEventListener('DOMContentLoaded', function() {
-					$("#gameButton").attr('disabled', true);
-					document.forms['lobby-form'].addEventListener('submit', function(e) {
-						e.preventDefault();
-						var timestamp = new Date().getTime();
-						var msg = [timestamp , <% if (typeof user !== "undefined" && user) { %> '[<%= user.local.username %>' <% } %> + "] " + document.getElementById('lobby-txt').value];
-						socket.emit('chat message', msg);
-						document.getElementById('lobby-txt').value = '';
-						return false;
-					});
-					<%if (typeof user !== "undefined" && user) { %>socket.emit('send user', '<%-user._id%>');<%} %>
-				});
-				</script>
-				<div class="uk-panel">
-					<h3 class="uk-panel-title"><i class="uk-icon-desktop"></i> Dominion Lobby</h3>
-				</div>
-				<div id="lobby-win" class="uk-panel uk-width-1-1 uk-panel-box uk-panel-box-secondary" style="height: 200px; overflow: auto;">
+          <table>
+          <% include ../partials/players %>
+          </table>
+      </div>
+    </div>
+    <div class="uk-width-small-3-10">
+      <div class="uk-panel uk-panel-box uk-panel-box-secondary" style="min-height:150px;">
+        <h3 class="uk-panel-title" ><i class="uk-icon-flask"></i> <span id="playerCount">Create Game</span></h3>
+          <div class="uk-grid">
+            <div class="uk-width-small-1-1" style="min-height:85px;">
+              <ul class="uk-list" id="setupList">
+              
+              </ul>
+            </div>
+            <div class="uk-width-small-1-1">
+              <button id="cancelButton" onclick="cancelGame(<% if (user) {%>'<%-user._id%>'<%}%>);" class="uk-button uk-button-small uk-button-danger" style="margin-bottom: 0px; float:right;" disabled><i id="cancelIcon" class="uk-icon-times"></i> Cancel</button>
+              <button id="gameButton" onclick="startGame(<% if (user) {%>'<%-user._id%>'<%}%>);" class="uk-button uk-button-small uk-button-success" style="margin-bottom: 0px; float:right;" disabled><i id="startIcon" class="uk-icon-spinner"></i> Start</button>
+            </div>
+          </div>
+      </div>
+    </div>
+    <div class="uk-width-small-1-1"><br/></div>
+    <div class="uk-width-small-1-1">
+      <div class="uk-panel uk-panel-box uk-panel-box-secondary">
+        <h3 class="uk-panel-title"><i class="uk-icon-laptop"></i> Current Games</h2>
+        No current games
+      </div>
+    </div>
+    <div class="uk-width-small-1-1"><br/></div>
+    <div class="uk-width-small-1-1">
+      <div class="uk-panel uk-panel-box uk-panel-box-secondary">
+        <script>
+        var socket = io();
+        document.addEventListener('DOMContentLoaded', function() {
+          $("#gameButton").attr('disabled', true);
+          document.forms['lobby-form'].addEventListener('submit', function(e) {
+            e.preventDefault();
+            var timestamp = new Date().getTime();
+            var msg = [timestamp , <% if (typeof user !== "undefined" && user) { %> '[<%= user.local.username %>' <% } %> + "] " + document.getElementById('lobby-txt').value];
+            socket.emit('chat message', msg);
+            document.getElementById('lobby-txt').value = '';
+            return false;
+          });
+          <%if (typeof user !== "undefined" && user) { %>socket.emit('send user', '<%-user._id%>');<%} %>
+        });
+        </script>
+        <div class="uk-panel">
+          <h3 class="uk-panel-title"><i class="uk-icon-desktop"></i> Dominion Lobby</h3>
+        </div>
+        <div id="lobby-win" class="uk-panel uk-width-1-1 uk-panel-box uk-panel-box-secondary" style="height: 200px; overflow: auto;">
 
-				</div>
-				<form class="uk-form" id="lobby-form" action="">
-					<fieldset data-uk-margin>
-						<div class="uk-form-row uk-panel-box-secondary"></div>
-							<input id="lobby-txt" type="text" placeholder="Start typing..." class="uk-width-9-10 uk-grid-collapse uk-form-blank" autocomplete="off" <%if (typeof user !== "undefined" && user) { } else { %>disabled<% } %>>
-							<button class="uk-button uk-button-primary" style="float:right;" <%if (typeof user !== "undefined" && user) { } else { %>disabled<% } %>><i class="uk-icon-share"></i> Send</button>
-						</div>
-					</fieldset>
-				</form>
-			</div>
-		</div>
-		<footer>
+        </div>
+        <form class="uk-form" id="lobby-form" action="">
+          <fieldset data-uk-margin>
+            <div class="uk-form-row uk-panel-box-secondary"></div>
+              <input id="lobby-txt" type="text" placeholder="Start typing..." class="uk-width-9-10 uk-grid-collapse uk-form-blank" autocomplete="off" <%if (typeof user !== "undefined" && user) { } else { %>disabled<% } %>>
+              <button class="uk-button uk-button-primary" style="float:right;" <%if (typeof user !== "undefined" && user) { } else { %>disabled<% } %>><i class="uk-icon-share"></i> Send</button>
+            </div>
+          </fieldset>
+        </form>
+      </div>
+    </div>
+    <footer>
         <% include ../partials/footer %>
-		</footer>
-	</div>
+    </footer>
+  </div>
     </main>
 </div>    
 </body>

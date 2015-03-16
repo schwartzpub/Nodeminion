@@ -1,16 +1,16 @@
 <!-- views/partials/header.ejs -->
 <audio id="chirp" src="/audio/chirp.mp3" preload="auto"></audio>
 <nav class="uk-navbar" role="navigation">
-	<a href="/" class="uk-navbar-brand"><img src="/images/logo.png" height="20" width="20" /><strong>Node</strong><span style="color: #B40404">minion</span></a>
-	<div class="uk-navbar-flip">
-		<ul class="uk-navbar-nav">
-			<% if (typeof user !== "undefined" && user) { %>
-				<li><a href="/profile"><i class="uk-icon-gears"></i> <%= user.local.username %></a></li>
-				<li><a href="/logout"><i class="uk-icon-hand-o-left"></i> Logout</a></li>
-			<% }else { %>
-				<li><a href="../login"><i class="uk-icon-user"></i> login</a></li>
-				<li><a href="../signup"><i class="uk-icon-rocket"></i> signup</a></li>
-			<% } %>
-		</ul>
-	</div>
+  <a href="/" class="uk-navbar-brand"><img src="/images/logo.png" height="20" width="20" /><strong>Node</strong><span style="color: #B40404">minion</span></a>
+  <div class="uk-navbar-flip">
+    <ul class="uk-navbar-nav">
+      <% if (typeof user !== "undefined" && user) { %>
+        <li><a href="/profile"><i class="uk-icon-gears"></i> <%= user.local.username %></a></li>
+        <li><a href="/logout"><i class="uk-icon-hand-o-left"></i> Logout</a></li>
+      <% }else { %>
+        <li><a href="../login"><i class="uk-icon-user"></i> login</a></li>
+        <li><a href="../signup"><i class="uk-icon-rocket"></i> signup</a></li>
+      <% } %>
+    </ul>
+  </div>
 </nav>

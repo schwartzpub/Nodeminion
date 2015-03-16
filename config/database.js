@@ -1,5 +1,5 @@
 // config/database.js
 
 module.exports = {
-	'url' : 'mongodb://localhost/nodeusers'
+  'url' : 'mongodb://localhost/nodeusers'
 };

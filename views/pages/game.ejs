@@ -2,88 +2,88 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<% include ../partials/head %>
-	<script src="/js/game/game.js"></script>
-	<script>
-	var socket = io();
-	var gameId = '<%- gameid %>';
-	var user = <% if (typeof user !== "undefined" && user) { %><%- '"' + String(user.local.username) + '"'%><% } %>;	
-	document.addEventListener('DOMContentLoaded', function() {
-		<%if (typeof user !== "undefined" && user) { %>socket.emit('send user', '<%-user._id%>');<%} %>
+  <% include ../partials/head %>
+  <script src="/js/game/game.js"></script>
+  <script>
+  var socket = io();
+  var gameId = '<%- gameid %>';
+  var user = <% if (typeof user !== "undefined" && user) { %><%- '"' + String(user.local.username) + '"'%><% } %>;  
+  document.addEventListener('DOMContentLoaded', function() {
+    <%if (typeof user !== "undefined" && user) { %>socket.emit('send user', '<%-user._id%>');<%} %>
 
-		document.forms['private-lobby-form'].addEventListener('submit', function(e) {
-			e.preventDefault();
-			var timestamp = new Date().getTime();
-			var msg = [timestamp , '[' + user + '] ' + document.getElementById('private-lobby-txt').value];
-			socket.emit('game message', msg, gameId);
-			document.getElementById('private-lobby-txt').value = '';
-			return false;
-		});
-	});
-	</script>
+    document.forms['private-lobby-form'].addEventListener('submit', function(e) {
+      e.preventDefault();
+      var timestamp = new Date().getTime();
+      var msg = [timestamp , '[' + user + '] ' + document.getElementById('private-lobby-txt').value];
+      socket.emit('game message', msg, gameId);
+      document.getElementById('private-lobby-txt').value = '';
+      return false;
+    });
+  });
+  </script>
 </head>
 <body>
 <div class="uk-container uk-container-center uk-margin-large-bottom">
-	<header>
-		<% include ../partials/header %>
+  <header>
+    <% include ../partials/header %>
     </header>
-	<main>
-		<div class="uk-grid uk-grid-collapse">
-			<div class="uk-width-1-5">
-				<div class="uk-panel uk-panel-space" style="height:150px;">
-					<div class="uk-panel-header"><h4 class="uk-panel-title"><i class="uk-icon-trophy"></i> Victory</h4></div>
-				</div>
-			</div>
-			<div class="uk-width-1-5">
-				<div class="uk-panel uk-panel-space" style="height:150px;">
-					<div class="uk-panel-header"><h4 class="uk-panel-title"><i class="uk-icon-money"></i> Treasure</h4></div>
-				</div>
-			</div>
-			<div class="uk-width-3-5">
-				<div class="uk-panel uk-panel-space" style="height:150px;">
-					<div class="uk-panel-header"><h4 class="uk-panel-title"><i class="uk-icon-shield"></i> Kingdom</h4></div>
-				</div>
-			</div>
-			<div class="uk-width-4-5">
-				<div class="uk-panel uk-panel-space" style="height:300px;">
-					<div class="uk-panel-header"><h4 class="uk-panel-title"><i class="uk-icon-photo"></i> Play Area</h4></div>
-				</div>
-			</div>
-			<div class="uk-width-1-5">
-				<div class="uk-panel uk-panel-space" style="height:300px;">
-					<div class="uk-panel-header"><h4 class="uk-panel-title"><i class="uk-icon-gamepad"></i> Controls</h4></div>
-				</div>
-			</div>
-			<div class="uk-width-3-6">
-				<div class="uk-panel uk-panel-space">
-					<h4 class="uk-panel-title"><i class="uk-icon-comments-o"></i> Private Lobby</h4>
-					<div id="private-lobby" class="uk-panel uk-width-1-1 uk-panel-box uk-panel-box-secondary" style="height:150px; overflow: auto;">
-						<ul class="uk-list">
-						
-						</ul>
-					</div>
-					<form class="uk-form" id="private-lobby-form" action="">
-						<fieldset data-uk-margin>
-							<div class="uk-form-row uk-panel-box-secondary">
-								<input id="private-lobby-txt" type="text" placeholder="Start typing..." class="uk-width-2-3 uk-form-blank" autocomplete="off" <%if (typeof user !== "undefined" && user) { } else { %>disabled<% } %>>
-								<button class="uk-button uk-button-primary" style="float:right;" <%if (typeof user !== "undefined" && user) { } else { %>disabled<% } %>><i class="uk-icon-share"></i> Send</button>
-							</div>
-						</fieldset>
-					</form>
-				</div>
-			</div>
-			<div class="uk-width-3-6">
-				<div class="uk-panel uk-panel-space" style="height:175px;">
-					<h4 class="uk-panel-title"><i class="uk-icon-history"></i> History</h4>
-					<div id="private-history" class="uk-panel uk-width-1-1 uk-panel-box uk-panel-box-secondary" style="height:150px; overflow: auto;">
+  <main>
+    <div class="uk-grid uk-grid-collapse">
+      <div class="uk-width-1-5">
+        <div class="uk-panel uk-panel-space" style="height:150px;">
+          <div class="uk-panel-header"><h4 class="uk-panel-title"><i class="uk-icon-trophy"></i> Victory</h4></div>
+        </div>
+      </div>
+      <div class="uk-width-1-5">
+        <div class="uk-panel uk-panel-space" style="height:150px;">
+          <div class="uk-panel-header"><h4 class="uk-panel-title"><i class="uk-icon-money"></i> Treasure</h4></div>
+        </div>
+      </div>
+      <div class="uk-width-3-5">
+        <div class="uk-panel uk-panel-space" style="height:150px;">
+          <div class="uk-panel-header"><h4 class="uk-panel-title"><i class="uk-icon-shield"></i> Kingdom</h4></div>
+        </div>
+      </div>
+      <div class="uk-width-4-5">
+        <div class="uk-panel uk-panel-space" style="height:300px;">
+          <div class="uk-panel-header"><h4 class="uk-panel-title"><i class="uk-icon-photo"></i> Play Area</h4></div>
+        </div>
+      </div>
+      <div class="uk-width-1-5">
+        <div class="uk-panel uk-panel-space" style="height:300px;">
+          <div class="uk-panel-header"><h4 class="uk-panel-title"><i class="uk-icon-gamepad"></i> Controls</h4></div>
+        </div>
+      </div>
+      <div class="uk-width-3-6">
+        <div class="uk-panel uk-panel-space">
+          <h4 class="uk-panel-title"><i class="uk-icon-comments-o"></i> Private Lobby</h4>
+          <div id="private-lobby" class="uk-panel uk-width-1-1 uk-panel-box uk-panel-box-secondary" style="height:150px; overflow: auto;">
+            <ul class="uk-list">
+            
+            </ul>
+          </div>
+          <form class="uk-form" id="private-lobby-form" action="">
+            <fieldset data-uk-margin>
+              <div class="uk-form-row uk-panel-box-secondary">
+                <input id="private-lobby-txt" type="text" placeholder="Start typing..." class="uk-width-2-3 uk-form-blank" autocomplete="off" <%if (typeof user !== "undefined" && user) { } else { %>disabled<% } %>>
+                <button class="uk-button uk-button-primary" style="float:right;" <%if (typeof user !== "undefined" && user) { } else { %>disabled<% } %>><i class="uk-icon-share"></i> Send</button>
+              </div>
+            </fieldset>
+          </form>
+        </div>
+      </div>
+      <div class="uk-width-3-6">
+        <div class="uk-panel uk-panel-space" style="height:175px;">
+          <h4 class="uk-panel-title"><i class="uk-icon-history"></i> History</h4>
+          <div id="private-history" class="uk-panel uk-width-1-1 uk-panel-box uk-panel-box-secondary" style="height:150px; overflow: auto;">
 
-					</div>
-					<button onclick="javaScript:void(0);" class="uk-button uk-button-danger" style="float:right;"><i class="uk-icon-exclamation"></i> Quit</button>
-					<button onclick="javaScript:void(0);" class="uk-button uk-button-danger" style="float:right;margin-right:5px;"><i class="uk-icon-user-times"></i> Kick</button>
-				</div>
-			</div>
-		</div>	
-	</main>
+          </div>
+          <button onclick="javaScript:void(0);" class="uk-button uk-button-danger" style="float:right;"><i class="uk-icon-exclamation"></i> Quit</button>
+          <button onclick="javaScript:void(0);" class="uk-button uk-button-danger" style="float:right;margin-right:5px;"><i class="uk-icon-user-times"></i> Kick</button>
+        </div>
+      </div>
+    </div>  
+  </main>
 </div>
 </body>
 </html>
