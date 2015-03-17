@@ -71,15 +71,15 @@ baseDeck = {
         "bonus"
       ],
       "cost"        : 2,
-      "mechanic"    : [
-        "bonus"     : [
+      "mechanic"    : [{
+        "bonus"     : [{
           "action"  : 1
-        ],
-        "sifter"    : [
+        }],
+        "sifter"    : [{
           "draw"    : -1,
           "penalty" : 1
-        ]
-      ],
+        }]
+      }],
       "text"        : "+1 Action. Discard any number of cards. +1 Card per card discarded."
     },
     {
@@ -90,9 +90,9 @@ baseDeck = {
         "trasher"
       ],
       "cost"        : 2,
-      "mechanic"    : [
+      "mechanic"    : [{
         "trash"     : 4
-      ],
+      }],
       "text"        : "Trash up to 4 cards from your hand."
     },
     {
@@ -104,11 +104,11 @@ baseDeck = {
         "bonus"
       ],
       "cost"        : 2,
-      "mechanic"    : [
-        "bonus"     : [
+      "mechanic"    : [{
+        "bonus"     : [{
           "card"    : 2
-        ]
-      ],
+        }]
+      }],
       "text"        : "+2 Cards. When another player plays an Attack card, you may reveal this from your hand. If you do, you are unaffected by that attack."
     },
     {
@@ -119,12 +119,12 @@ baseDeck = {
         "terminal silver"        
       ],
       "cost"        : 3,
-      "mechanic"    : [
-        "bonus"     : [
+      "mechanic"    : [{
+        "bonus"     : [{
           "coin"    : 2
-        ],
+        }],
         "discard"   : -1
-      ],
+      }],
       "text"        : "+2.  You may immediately put your deck into your discard pile."
     },
     {
@@ -136,12 +136,12 @@ baseDeck = {
         "bonus"
       ],
       "cost"        : 3,
-      "mechanic"    : [
-        "bonus"     : [
+      "mechanic"    : [{
+        "bonus"     : [{
           "card"    : 1,
           "action"  : 2
-        ]
-      ],
+        }]
+      }],
       "text"        : "+1 Card +2 Actions"
     },
     {
@@ -152,11 +152,12 @@ baseDeck = {
         "terminal silver"
       ],
       "cost"        : 3,
-      "mechanic"    : [
-        "bonus"     : [
+      "mechanic"    : [{
+        "bonus"     : [{
           "buy"     : 1,
           "coin"    : 2
-      ],
+        }]
+      }],
       "text"        : "+1 Buy +2"
     },
     {
@@ -167,12 +168,12 @@ baseDeck = {
         "gainer"
       ],
       "cost"        : 3,
-      "mechanic"    : [
-        "gainer"    : [
+      "mechanic"    : [{
+        "gainer"    : [{
           "number"  : 1,
           "cost"    : 4
-        ]
-      ],
+        }]
+      }],
       "text"        : "Gain a card costing up to 4"
     }
   ]
