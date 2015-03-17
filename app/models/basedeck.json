@@ -206,10 +206,10 @@ baseDeck = {
     {
       "name"        : "Feast",
       "value"       : 0,
-      "type"        : [{
+      "type"        : [
         "action",
         "trasher"
-      }],
+      ],
       "cost"        : 4,
       "mechanic"    : [{
         "trash"     : [{
