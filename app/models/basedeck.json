@@ -213,7 +213,8 @@ baseDeck = {
       "cost"        : 4,
       "mechanic"    : [{
         "trash"     : [{
-          "number"  : -2,
+          "number"  : 1,
+          "type"    : "self",
           "gain"    : [{
             "number": 1,
             "cost"  : 5
@@ -237,6 +238,65 @@ baseDeck = {
         }]
       }],
       "text"        : "Worth 1VP for every 10 cards in your deck (rounded down)."
+    },
+    {
+      "name"        : "Militia",
+      "value"       : 0,
+      "type"        : [
+        "action",
+        "attack",
+        "terminal silver"
+      ],
+      "cost"        : 4,
+      "mechanic"    : [{
+        "bonus"     : [{
+          "coin"    : 2
+        }],
+        "attack"    : [{
+          "limit"   : 3
+        }]
+      }],
+      "text"        : "+2 Each other player discards down to 3 cards in his hand."
+    },
+    {
+      "name"        : "Moneylender",
+      "value"       : 0,
+      "type"        : [
+        "action",
+        "trasher"
+      ],
+      "cost"        : 4,
+      "mechanic"    : [{
+        "trash"     : [{
+          "number"  : 1,
+          "type"    : "copper",
+          "gain"    : [{
+            "number": 1,
+            "coin"  : 3
+          }]
+        }]
+      }],
+      "text"        : "Trash a Copper from your hand. If you do, +3"
+    },
+    {
+      "name"        : "Remodel",
+      "value"       : 0,
+      "type"        : [
+        "action",
+        "trasher",
+        "gainer"
+      ],
+      "cost"        : 4,
+      "mechanic"    : [{
+        "trash"     : [{
+          "number"  : 1
+        }],
+        "gain"      : [{
+          "number"  : 1,
+          "cost"    : "trash + 2"
+        }]
+      }],
+      "text"        : "Trash a card from your hand. Gain a card costing up to 2 more than the trashed card."
     }
   ]
 }

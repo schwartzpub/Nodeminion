@@ -1,3 +1,5 @@
+
+
 Card Types:
   Action (White Border):
     Attack Subtype (No Special Color):
