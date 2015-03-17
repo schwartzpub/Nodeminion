@@ -171,10 +171,72 @@ baseDeck = {
       "mechanic"    : [{
         "gainer"    : [{
           "number"  : 1,
+          "type"    : "any",
           "cost"    : 4
         }]
       }],
       "text"        : "Gain a card costing up to 4"
+    },
+    {
+      "name"        : "Bureaucrat",
+      "value"       : 0,
+      "type"        : [
+        "action",
+        "attack",
+        "gainer"
+      ],
+      "cost"        : 4,
+      "mechanic"    : [{
+        "gainer"    : [{
+          "number"  : 1,
+          "type"    : "silver",
+          "location": "topdeck"
+        }],
+        "attack"    : [{
+          "number"  : -1,
+          "reveal"  : [{
+            "number": 1,
+            "type"  : "victory",
+            "action": "ondeck"
+          }]
+        }]
+      }],
+      "text"        : "Gain a Silver card; put it on top of your deck. Each other player reveals a Victory card from his hand and puts it on his deck (or reveals a hand with no Victory cards.)"
+    },
+    {
+      "name"        : "Feast",
+      "value"       : 0,
+      "type"        : [{
+        "action",
+        "trasher"
+      }],
+      "cost"        : 4,
+      "mechanic"    : [{
+        "trash"     : [{
+          "number"  : -2,
+          "gain"    : [{
+            "number": 1,
+            "cost"  : 5
+          }]
+        }]
+      }],
+      "text"        : "Trash this card. Gain a card costing up to 5"
+    },
+    {
+      "name"        : "Gardens",
+      "value"       : 0,
+      "type"        : [{
+        "victory"
+      }],
+      "cost"        : 4,
+      "mechanic"    : [{
+        "victory"   : [{
+          "vp"      : 1,
+          "multi"   : 10,
+          "round"   : "down"
+        }]
+      }],
+      "text"        : "Worth 1VP for every 10 cards in your deck (rounded down)."
     }
   ]
 }
