@@ -26,7 +26,7 @@ function addPlayer(userId,userName,leaderId){
 function startGame(userId) {
   var gameId = gameGenerate(8);
   
-  socket.emit('start game', userId, gameId);
+  socket.emit('start game', userId, gameId, 'base');
 };
 
 // Create a gameId 

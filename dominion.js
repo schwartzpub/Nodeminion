@@ -18,6 +18,7 @@ var morgan = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
+var _ = require('underscore');
 
 var MongoStore = require('connect-mongo')(session);
 var User = require('./app/models/user.js');
@@ -126,7 +127,7 @@ io.on('connection', function(socket) {
   });
   
   // in game chat
-  socket.on('game message', function(msg,gameId) {  
+  socket.on('game message', function(msg, gameId) {  
     if (msg != "Invalid date") {  
       io.to(gameId).emit('game message', msg);
     }
@@ -197,17 +198,18 @@ io.on('connection', function(socket) {
   });
   
   // start game 
-  socket.on('start game', function (userId, gameId) {
+  socket.on('start game', function (userId, gameId, deckBuild) {
 
-    createGame(userId, gameId, createPlayer);   
+    createGame(userId, gameId, deckBuild, createPlayer);   
 
     // createGame function.  Instantiates a Game Mongo.model and fills the fields needed to play a game. Callback: createPlayer()
-    function createGame(userId, gameId, createPlayer) {
+    function createGame(userId, gameId, deckBuild, createPlayer) {
       gamelist[userId].status = 1;
       gamelist[userId].gameid = gameId;   
 
       var newGame = new Game(); // Instatiate new game
       newGame.room = gameId;
+      newGame.type = deckBuild;
       newGame.status = 1;
       newGame.winner = 'none';
       newGame.players = [];
@@ -226,17 +228,79 @@ io.on('connection', function(socket) {
         io.emit('add alert', gamelist[userId].players[i], 2); // Let entire server know that each user for this game is not available, and in a game.
         sessionlist[gamelist[userId].players[i]].emit('join game', gameId); // Kick off the join game event on clients
       }
-      createPlayer(newGame, saveGame); // Move on to createPlayer method. Callback: saveGame()
+      createPlayer(newGame, buildDeck); // Move on to createPlayer method. Callback: saveGame()
     };
     
     // createPlayer function.  This adds players to the newly instatiated game in the game database.
-    function createPlayer(newGame, saveGame) {
+    function createPlayer(newGame, buildDeck) {
       for (var i = 0; i < gamelist[userId].players.length; i++) {
-        newGame.players.set(i, {'userid' : gamelist[userId].players[i], 'turn' : false, 'winner' : false, 'finalscore' : 0, 'status' : 1});
-      }   
-      saveGame(newGame); // Move on to saveGame method.
+        newGame.players.set(i, {'userid' : gamelist[userId].players[i], 'turn' : false, 'winner' : false, 'finalscore' : 0, 'status' : 1, 'deck' : [], 'hand' : []});
+      }
+      buildDeck(newGame, buildPlayers); // Move on to saveGame method.
     };
+    
+    function buildDeck(newGame, buildPlayers) {
+      var deckType = require('./app/models/'+ newGame.type +'.json');
+      var deckPicks = _.sample(deckType['kingdom'], 10);
+      
+      var thisDeck = {
+        kingdom     : {},
+        treasure    : {
+          Platinum  : 0,
+          Gold      : 30,
+          Silver    : 40,
+          Copper    : 60
+        },
+        curse       : {
+          Curse     : 30
+        },
+        victory     : {
+          Colony    : 0,
+          Province  : 0,
+          Duchy     : 0,
+          Estate    : 0
+        }
+      };
 
+      thisDeck.curse.Curse = ((newGame.numPlayers) === 2 ? 10 : ((newGame.numPlayers === 3) ? 20 : 30));
+      thisDeck.treasure.Platinum = ((newGame.type === 'prosperity') ? 12 : 0);
+      thisDeck.victory.Colony = ((newGame.type === 'prosperity' && thisDeck.treasure.Platinum > 0) ? ((newGame.numPlayers < 3) ? 8 : 12) : 0);
+      thisDeck.victory.Province = thisDeck.victory.Duchy = thisDeck.victory.Estate = ((newGame.numPlayers < 3) ? 8 : 12);
+
+      for (var i = 0; i < 10; i++) {
+        thisDeck.kingdom[deckPicks[i].name] = ((deckPicks[i].type.indexOf('victory') > -1) ? ((newGame.numPlayers < 3) ? 8 : 12) : 10);
+      }
+      
+      newGame.deck = thisDeck;
+      
+      buildPlayers(newGame, saveGame);
+    };
+    
+    function buildPlayers(newGame, saveGame) {
+      var playerOrder = [];
+      
+      newGame.players.forEach( function(p) {
+        playerOrder.push(p.userid);
+        newGame.deck.Copper -= 7;
+        newGame.deck.Estate -= 3;
+        for (var i = 0; i < 7; i ++) {
+          if(i<3){ 
+            p.deck.push('Estate');
+            p.deck.push('Copper');
+          } else if (i>2 && i<6) {
+            p.deck.push('Copper');
+          } else {
+            p.deck.push('Copper');
+            p.deck = _.shuffle(p.deck);
+          }
+        }
+      });
+      
+      newGame.order.push(_.shuffle(playerOrder));
+      
+      saveGame(newGame);
+    };
+    
     function saveGame(newGame) {
       newGame.save();  // Saves game. Callback: none
     };
@@ -301,7 +365,14 @@ io.on('connection', function(socket) {
         }
       }
     }   
-  }); 
+  });
+
+  // ===============================================================================================
+  // GAME PLAY METHODS
+  //   These methods all handle gameplay and deck manipulation.   
+  //   
+  // ===============================================================================================
+  
 });
 
 server.listen(port);

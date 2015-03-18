@@ -4,13 +4,17 @@ var mongoose = require('mongoose');
 
 // define the schema for our game model
 var gameSchema = mongoose.Schema({
-  room    : String,
-  status    : String,
+  room        : String,
+  type        : String,
+  status      : String,
   numPlayers  : Number,
-  players   : [],
-  winner    : String,
-  start   : Date,
-  end     : Date
+  players     : [],
+  order       : [],
+  deck        : [],
+  playArea    : [],
+  winner      : String,
+  start       : Date,
+  end         : Date
 });
 
 // create the model for games and expose it to our app
