@@ -1,0 +1,302 @@
+{
+  "victory"         : [
+    {
+      "name"        : "Province",
+      "value"       : 6,
+      "type"        : [
+        "victory"
+      ],
+      "cost"        : 8
+    },
+    {
+      "name"        : "Duchy",
+      "value"       : 3,
+      "type"        : [
+        "victory"
+      ],
+      "cost"        : 5
+    },
+    {
+      "name"        : "Estate",
+      "value"       : 1,
+      "type"        : [
+        "victory"
+      ],
+      "cost"        : 3
+    }
+  ],
+  "treasure"        : [
+    {
+      "name"        : "Gold",
+      "value"       : 3,
+      "type"        : [
+        "treasure"
+      ],
+      "cost"        : 6
+    },
+    {
+      "name"        : "Silver",
+      "value"       : 2,
+      "type"        : [
+        "treasure"
+      ],
+      "cost"        : 3
+    },
+    {
+      "name"        : "Copper",
+      "value"       : 1,
+      "type"        : [
+        "treasure"
+      ],
+      "cost"        : 0
+    }
+  ],
+  "curse"           : [
+    {
+      "name"        : "Curse",
+      "value"       : -1,
+      "type"        : [
+        "curse"
+       ],
+       "cost"       : 0
+    }
+  ],
+  "kingdom"         : [
+    {
+      "name"        : "Cellar",
+      "value"       : 0,
+      "type"        : [
+        "action",
+        "sifter",
+        "bonus"
+      ],
+      "cost"        : 2,
+      "mechanic"    : [{
+        "bonus"     : [{
+          "action"  : 1
+        }],
+        "sifter"    : [{
+          "draw"    : -1,
+          "penalty" : 1
+        }]
+      }],
+      "text"        : "+1 Action. Discard any number of cards. +1 Card per card discarded."
+    },
+    {
+      "name"        : "Chapel",
+      "value"       : 0,
+      "type"        : [
+        "action",
+        "trasher"
+      ],
+      "cost"        : 2,
+      "mechanic"    : [{
+        "trash"     : 4
+      }],
+      "text"        : "Trash up to 4 cards from your hand."
+    },
+    {
+      "name"        : "Moat",
+      "value"       : 0,
+      "type"        : [
+        "action",
+        "reaction",
+        "bonus"
+      ],
+      "cost"        : 2,
+      "mechanic"    : [{
+        "bonus"     : [{
+          "card"    : 2
+        }]
+      }],
+      "text"        : "+2 Cards. When another player plays an Attack card, you may reveal this from your hand. If you do, you are unaffected by that attack."
+    },
+    {
+      "name"        : "Chancellor",
+      "value"       : 0,
+      "type"        : [
+        "action",
+        "terminal silver"        
+      ],
+      "cost"        : 3,
+      "mechanic"    : [{
+        "bonus"     : [{
+          "coin"    : 2
+        }],
+        "discard"   : -1
+      }],
+      "text"        : "+2.  You may immediately put your deck into your discard pile."
+    },
+    {
+      "name"        : "Village",
+      "value"       : 0,
+      "type"        : [
+        "action",
+        "village",
+        "bonus"
+      ],
+      "cost"        : 3,
+      "mechanic"    : [{
+        "bonus"     : [{
+          "card"    : 1,
+          "action"  : 2
+        }]
+      }],
+      "text"        : "+1 Card +2 Actions"
+    },
+    {
+      "name"        : "Woodcutter",
+      "value"       : 0,
+      "type"        : [
+        "action",
+        "terminal silver"
+      ],
+      "cost"        : 3,
+      "mechanic"    : [{
+        "bonus"     : [{
+          "buy"     : 1,
+          "coin"    : 2
+        }]
+      }],
+      "text"        : "+1 Buy +2"
+    },
+    {
+      "name"        : "Workshop",
+      "value"       : 0,
+      "type"        : [
+        "action",
+        "gainer"
+      ],
+      "cost"        : 3,
+      "mechanic"    : [{
+        "gainer"    : [{
+          "number"  : 1,
+          "type"    : "any",
+          "cost"    : 4
+        }]
+      }],
+      "text"        : "Gain a card costing up to 4"
+    },
+    {
+      "name"        : "Bureaucrat",
+      "value"       : 0,
+      "type"        : [
+        "action",
+        "attack",
+        "gainer"
+      ],
+      "cost"        : 4,
+      "mechanic"    : [{
+        "gainer"    : [{
+          "number"  : 1,
+          "type"    : "silver",
+          "location": "topdeck"
+        }],
+        "attack"    : [{
+          "number"  : -1,
+          "reveal"  : [{
+            "number": 1,
+            "type"  : "victory",
+            "action": "ondeck"
+          }]
+        }]
+      }],
+      "text"        : "Gain a Silver card; put it on top of your deck. Each other player reveals a Victory card from his hand and puts it on his deck (or reveals a hand with no Victory cards.)"
+    },
+    {
+      "name"        : "Feast",
+      "value"       : 0,
+      "type"        : [
+        "action",
+        "trasher"
+      ],
+      "cost"        : 4,
+      "mechanic"    : [{
+        "trash"     : [{
+          "number"  : 1,
+          "type"    : "self",
+          "gain"    : [{
+            "number": 1,
+            "cost"  : 5
+          }]
+        }]
+      }],
+      "text"        : "Trash this card. Gain a card costing up to 5"
+    },
+    {
+      "name"        : "Gardens",
+      "value"       : 0,
+      "type"        : [
+        "victory"
+      ],
+      "cost"        : 4,
+      "mechanic"    : [{
+        "victory"   : [{
+          "vp"      : 1,
+          "multi"   : 10,
+          "round"   : "down"
+        }]
+      }],
+      "text"        : "Worth 1VP for every 10 cards in your deck (rounded down)."
+    },
+    {
+      "name"        : "Militia",
+      "value"       : 0,
+      "type"        : [
+        "action",
+        "attack",
+        "terminal silver"
+      ],
+      "cost"        : 4,
+      "mechanic"    : [{
+        "bonus"     : [{
+          "coin"    : 2
+        }],
+        "attack"    : [{
+          "limit"   : 3
+        }]
+      }],
+      "text"        : "+2 Each other player discards down to 3 cards in his hand."
+    },
+    {
+      "name"        : "Moneylender",
+      "value"       : 0,
+      "type"        : [
+        "action",
+        "trasher"
+      ],
+      "cost"        : 4,
+      "mechanic"    : [{
+        "trash"     : [{
+          "number"  : 1,
+          "type"    : "copper",
+          "gain"    : [{
+            "number": 1,
+            "coin"  : 3
+          }]
+        }]
+      }],
+      "text"        : "Trash a Copper from your hand. If you do, +3"
+    },
+    {
+      "name"        : "Remodel",
+      "value"       : 0,
+      "type"        : [
+        "action",
+        "trasher",
+        "gainer"
+      ],
+      "cost"        : 4,
+      "mechanic"    : [{
+        "trash"     : [{
+          "number"  : 1
+        }],
+        "gain"      : [{
+          "number"  : 1,
+          "cost"    : "trash + 2"
+        }]
+      }],
+      "text"        : "Trash a card from your hand. Gain a card costing up to 2 more than the trashed card."
+    }
+  ]
+}
