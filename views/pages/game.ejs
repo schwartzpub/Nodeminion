@@ -21,27 +21,101 @@
     });
   });
   </script>
+  <style>
+    #thing {
+      width: 100px;
+      border: 1px solid #23C43E;
+      background-color: #fff;
+      color: #23C43E;
+      margin-bottom: 2px;
+      padding: 2px;
+      text-align: left;
+    }
+    #thing2 {
+      width: 100px;
+      border: 1px solid #F4D229;
+      background-color: #fff;
+      color: #F4D229;
+      margin-bottom: 2px;
+      padding: 2px;
+      text-align: left;
+    }
+    #thing3 {
+      height: 15px;
+      width: 22%;
+      border-radius: 3px;
+      border: 1px solid rgba(186,186,186,0.8);
+      background-color: rgba(186,186,186,0.2);
+      margin: 2px;
+      padding: 2px;
+      float:left;
+    }
+  </style>
 </head>
 <body>
 <div class="uk-container uk-container-center uk-margin-large-bottom">
   <header>
     <% include ../partials/header %>
-    </header>
+  </header>
   <main>
     <div class="uk-grid uk-grid-collapse">
       <div class="uk-width-1-5">
-        <div class="uk-panel uk-panel-space" style="height:150px;">
+        <div class="uk-panel uk-panel-space" style="height:100px;">
           <div class="uk-panel-header"><h4 class="uk-panel-title"><i class="uk-icon-trophy"></i> Victory</h4></div>
+          <table border=0 style="font-size:8pt;">
+            <tr>
+              <td>8</td>
+              <td colspan=3><button id="thing">Province</button></td>
+              <td>$8</td>
+              <td></td>
+            </tr>
+            <tr >
+              <td></td>
+              <td colspan=3><button id="thing">Duchy</button></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr >
+              <td></td>
+              <td colspan=3><button id="thing">Estate</button></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </table>
         </div>
       </div>
       <div class="uk-width-1-5">
-        <div class="uk-panel uk-panel-space" style="height:150px;">
+        <div class="uk-panel uk-panel-space" style="height:100px;">
           <div class="uk-panel-header"><h4 class="uk-panel-title"><i class="uk-icon-money"></i> Treasure</h4></div>
+          <table border=0 style="font-size:8pt;">
+            <tr>
+              <td>8</td>
+              <td colspan=3><button id="thing2">Gold</button></td>
+              <td>$8</td>
+              <td></td>
+            </tr>
+            <tr >
+              <td></td>
+              <td colspan=3><button id="thing2">Silver</button></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr >
+              <td></td>
+              <td colspan=3><button id="thing2">Copper</button></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </table>
         </div>
       </div>
       <div class="uk-width-3-5">
-        <div class="uk-panel uk-panel-space" style="height:150px;">
+        <div class="uk-panel uk-panel-space" style="height:100px;">
           <div class="uk-panel-header"><h4 class="uk-panel-title"><i class="uk-icon-shield"></i> Kingdom</h4></div>
+            <div class="uk-panel uk-text-small" id="thing3">Philosophers Stone</div>
+            <div class="uk-panel uk-text-small" id="thing3">Test</div>
+            <div class="uk-panel uk-text-small" id="thing3">Test</div>
+            <div class="uk-panel uk-text-small" id="thing3">Test</div>
         </div>
       </div>
       <div class="uk-width-4-5">

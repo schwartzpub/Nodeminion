@@ -6,12 +6,11 @@
     <% include ../partials/head %>
 </head>
 <body>
-<div class="uk-container uk-container-center uk-margin-large-bottom">
-    <header>
-    <% include ../partials/header %>
-    </header>
 
-    <main>
+    <% include ../partials/header %>
+
+<div class="uk-container uk-container-center uk-margin-large-bottom">
+  <main>
   <div class="uk-grid uk-margin-top">
     <%
       if (typeof user !== "undefined" && user && user.local.status === 2) {
@@ -115,7 +114,7 @@
         <% include ../partials/footer %>
     </footer>
   </div>
-    </main>
+  </main>
 </div>    
 </body>
 </html>

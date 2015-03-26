@@ -67,6 +67,14 @@ io.on('connection', function(socket) {
         console.log('no game');
       } else {
         socket.join(gamelist[game].gameid);
+        Game.findOne({'room' : gamelist[game].gameid}, function (err, game) {
+          if (err) { console.log(err); }
+          game.players.forEach( function (e) {
+            if (msg === e.userid) {
+              socket.emit('decks', game.deck, e.deck);
+            }
+          });
+        });
       }
     }
   });
@@ -272,6 +280,7 @@ io.on('connection', function(socket) {
       }
       
       newGame.deck = thisDeck;
+      newGame.deck.kingdom = _.shuffle(newGame.deck.kingdom);
       
       buildPlayers(newGame, saveGame);
     };
@@ -303,6 +312,7 @@ io.on('connection', function(socket) {
     
     function saveGame(newGame) {
       newGame.save();  // Saves game. Callback: none
+      io.to(gameId).emit('welcome', 'Welcome to game ' + gameId + '!');
     };
   });
   
