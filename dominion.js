@@ -248,39 +248,42 @@ io.on('connection', function(socket) {
     };
     
     function buildDeck(newGame, buildPlayers) {
-      var deckType = require('./app/models/'+ newGame.type +'.json');
+      var deckType = require('./public/js/'+ newGame.type +'.json');
       var deckPicks = _.sample(deckType['kingdom'], 10);
       
       var thisDeck = {
         kingdom     : {},
         treasure    : {
-          Platinum  : 0,
-          Gold      : 30,
-          Silver    : 40,
-          Copper    : 60
+          Platinum  : deckType['treasure']['Platinum'],
+          Gold      : deckType['treasure']['Gold'],
+          Silver    : deckType['treasure']['Silver'],
+          Copper    : deckType['treasure']['Copper']
         },
         curse       : {
-          Curse     : 30
+          Curse     : deckType['curse']['Curse']
         },
         victory     : {
-          Colony    : 0,
-          Province  : 0,
-          Duchy     : 0,
-          Estate    : 0
+          Colony    : deckType['victory']['Colony'],
+          Province  : deckType['victory']['Province'],
+          Duchy     : deckType['victory']['Duchy'],
+          Estate    : deckType['victory']['Estate']
         }
       };
 
-      thisDeck.curse.Curse = ((newGame.numPlayers) === 2 ? 10 : ((newGame.numPlayers === 3) ? 20 : 30));
-      thisDeck.treasure.Platinum = ((newGame.type === 'prosperity') ? 12 : 0);
-      thisDeck.victory.Colony = ((newGame.type === 'prosperity' && thisDeck.treasure.Platinum > 0) ? ((newGame.numPlayers < 3) ? 8 : 12) : 0);
-      thisDeck.victory.Province = thisDeck.victory.Duchy = thisDeck.victory.Estate = ((newGame.numPlayers < 3) ? 8 : 12);
-
+      thisDeck.curse.Curse['count'] = ((newGame.numPlayers) === 2 ? 10 : ((newGame.numPlayers === 3) ? 20 : 30));      
+      thisDeck.treasure.Platinum['count'] = ((newGame.type === 'prosperity') ? 12 : 0);      
+      thisDeck.victory.Colony['count'] = ((newGame.type === 'prosperity' && thisDeck.treasure.Platinum > 0) ? ((newGame.numPlayers < 3) ? 8 : 12) : 0);      
+      thisDeck.victory.Province['count'] = thisDeck.victory.Duchy['count'] = thisDeck.victory.Estate['count'] = ((newGame.numPlayers < 3) ? 8 : 12);
+      thisDeck.treasure.Gold['count'] = 30;
+      thisDeck.treasure.Silver['count'] = 40;
+      thisDeck.treasure.Copper['count'] = 60;
+      
       for (var i = 0; i < 10; i++) {
-        thisDeck.kingdom[deckPicks[i].name] = ((deckPicks[i].type.indexOf('victory') > -1) ? ((newGame.numPlayers < 3) ? 8 : 12) : 10);
+        thisDeck.kingdom[deckPicks[i].name] = deckPicks[i];
+        thisDeck.kingdom[deckPicks[i].name]['count'] = ((deckPicks[i].type.indexOf('victory') > -1) ? ((newGame.numPlayers < 3) ? 8 : 12) : 10);
       }
       
       newGame.deck = thisDeck;
-      newGame.deck.kingdom = _.shuffle(newGame.deck.kingdom);
       
       buildPlayers(newGame, saveGame);
     };

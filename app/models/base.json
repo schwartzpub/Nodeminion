@@ -1,12 +1,13 @@
 {
-  "victory"         : [
-    {
-      "name"        : "Province",
-      "value"       : 6,
-      "type"        : [
-        "victory"
-      ],
-      "cost"        : 8
+  "victory"         : {
+      "Province"    : {
+        "name"        : "Province",
+        "value"       : 6,
+        "type"        : [
+          "victory"
+        ],
+        "cost"        : 8
+      }
     },
     {
       "name"        : "Duchy",
@@ -23,8 +24,7 @@
         "victory"
       ],
       "cost"        : 3
-    }
-  ],
+    },
   "treasure"        : [
     {
       "name"        : "Gold",

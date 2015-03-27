@@ -1,5 +1,6 @@
 var ObjectId = require('mongoose').Types.ObjectId;
 var User = require('../app/models/user');
+var Game = require('../app/models/game.js');
 // app/routes.js
 module.exports = function(app, passport, mongoose) {
 
@@ -45,26 +46,36 @@ module.exports = function(app, passport, mongoose) {
   // Game page
   app.get('/game/:id', isLoggedIn, function(req, res) {
   
-    userGame(req, renderGame);
+    userGame(req, gameDeck);
     
-    function userGame(req, renderGame) {
+    function userGame(req, gameDeck) {
       User.findById(req.user._id, function(err, document) {
         if (err) { console.log(err); }
         if (req.user.local.gameid === req.params.id && req.user.local.status === 2) {
-          renderGame(req);
+          gameDeck(req, renderGame);
         } else {
           res.redirect('/');
         }
       });
-    };
+    }
     
-    function renderGame(req) {
+    function gameDeck(req, renderGame) {
+      Game.findOne({'room' :req.params.id}, function(err, document) {
+        if (err) { console.log(err); }
+        //console.log(document.deck[0]);
+        renderGame(req,document.deck,document.type);
+      });
+    }
+    
+    function renderGame(req,deck,type) {
       req.session.cookie.expires = 1000 * 60 * 60 * 24 * 30;
       res.render('pages/game.ejs', {
         user : req.user,
-        gameid : req.params.id
+        gameid : req.params.id,
+        gametype : type,
+        gamedeck : deck
       });
-    };
+    }
   });
  
     // Login form

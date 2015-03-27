@@ -3,6 +3,13 @@
 <html>
 <head>
   <% include ../partials/head %>
+  <script>
+    var gameDeck = {};
+    var gameJSON = <%-JSON.stringify(gamedeck)%>;
+    for (var attr in gameJSON) {
+      gameDeck[attr] = gameJSON[attr];
+    }
+  </script>
   <script src="/js/game/game.js"></script>
   <script>
   var socket = io();
@@ -22,33 +29,48 @@
   });
   </script>
   <style>
-    #thing {
-      width: 100px;
-      border: 1px solid #23C43E;
-      background-color: #fff;
-      color: #23C43E;
-      margin-bottom: 2px;
-      padding: 2px;
-      text-align: left;
+    ul, li {
+        font-family:'verdana';
     }
-    #thing2 {
-      width: 100px;
-      border: 1px solid #F4D229;
-      background-color: #fff;
-      color: #F4D229;
-      margin-bottom: 2px;
-      padding: 2px;
-      text-align: left;
+    li {
+        font-size: 8pt;
     }
-    #thing3 {
-      height: 15px;
-      width: 22%;
-      border-radius: 3px;
-      border: 1px solid rgba(186,186,186,0.8);
-      background-color: rgba(186,186,186,0.2);
-      margin: 2px;
-      padding: 2px;
-      float:left;
+    ul {
+        list-style-position: inside;
+        list-style-type: none;
+    }
+    #victory, #treasure, div.kingdom {
+        float: left;
+        margin-left: -15px;
+    }
+
+    button.victory,button.treasure,button.kingdom,button.curse {
+        cursor: pointer;
+        margin-bottom: 2px;
+        width:75px;
+        font-size: 8pt
+    }
+    button.victory {
+        background-color: #82FA58;
+        border: 1px solid #000;
+    }
+    #cardDisplay {
+        clear: both;
+        width: 200px;
+        height: 250px;
+        margin: 15px;
+        border: 1px solid #000;
+    }
+    button.treasure {
+        background-color: #F3F781;
+        border: 1px solid #000;
+    }
+    button.kingdom {
+        border: 1px solid #1C1C1C;
+    }
+    button.curse {
+        background-color: #CC2EFA;
+        border: 1px solid #000;
     }
   </style>
 </head>
@@ -57,65 +79,78 @@
   <header>
     <% include ../partials/header %>
   </header>
-  <main>
+  <main ng-app="cardStore" ng-controller="CardController as cards">
     <div class="uk-grid uk-grid-collapse">
       <div class="uk-width-1-5">
         <div class="uk-panel uk-panel-space" style="height:100px;">
           <div class="uk-panel-header"><h4 class="uk-panel-title"><i class="uk-icon-trophy"></i> Victory</h4></div>
-          <table border=0 style="font-size:8pt;">
-            <tr>
-              <td>8</td>
-              <td colspan=3><button id="thing">Province</button></td>
-              <td>$8</td>
-              <td></td>
-            </tr>
-            <tr >
-              <td></td>
-              <td colspan=3><button id="thing">Duchy</button></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr >
-              <td></td>
-              <td colspan=3><button id="thing">Estate</button></td>
-              <td></td>
-              <td></td>
-            </tr>
-          </table>
+          <ul>
+            <li ng-repeat="card in cards.victory | orderBy:'-cost'" ng-if="card.count > 0">
+              <table>
+                <tr>
+                  <td width="50px">({{card.count}})</td>
+                  <td><button class="victory">{{card.name}}</button></td>
+                  <td>${{card.cost}}</td>
+                </tr>
+              </table>
+            </li>
+            <li ng-repeat="card in cards.curse | orderBy:'-cost'" ng-if="card.count > 0">
+              <table>
+                <tr>
+                  <td width="50px">({{card.count}})</td>
+                  <td><button class="curse">{{card.name}}</button></td>
+                  <td>${{card.cost}}</td>
+                </tr>
+              </table>
+            </li>
+          </ul>
         </div>
       </div>
       <div class="uk-width-1-5">
         <div class="uk-panel uk-panel-space" style="height:100px;">
           <div class="uk-panel-header"><h4 class="uk-panel-title"><i class="uk-icon-money"></i> Treasure</h4></div>
-          <table border=0 style="font-size:8pt;">
-            <tr>
-              <td>8</td>
-              <td colspan=3><button id="thing2">Gold</button></td>
-              <td>$8</td>
-              <td></td>
-            </tr>
-            <tr >
-              <td></td>
-              <td colspan=3><button id="thing2">Silver</button></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr >
-              <td></td>
-              <td colspan=3><button id="thing2">Copper</button></td>
-              <td></td>
-              <td></td>
-            </tr>
-          </table>
+          <ul>
+            <li ng-repeat="card in cards.treasure | orderBy:'-cost'" ng-if="card.count > 0">
+              <table>
+                <tr>
+                  <td width="25px">({{card.count}})</td>
+                  <td><button class="treasure">{{card.name}}</button></td>
+                  <td>${{card.cost}}</td>
+                </tr>
+              </table>
+            </li>
+          </ul>
         </div>
       </div>
       <div class="uk-width-3-5">
         <div class="uk-panel uk-panel-space" style="height:100px;">
           <div class="uk-panel-header"><h4 class="uk-panel-title"><i class="uk-icon-shield"></i> Kingdom</h4></div>
-            <div class="uk-panel uk-text-small" id="thing3">Philosophers Stone</div>
-            <div class="uk-panel uk-text-small" id="thing3">Test</div>
-            <div class="uk-panel uk-text-small" id="thing3">Test</div>
-            <div class="uk-panel uk-text-small" id="thing3">Test</div>
+            <div class='kingdom'>
+              <ul>
+                  <li ng-repeat="card in cards.kingdom | orderBy: '-cost' | slice:0:5">
+                    <table>
+                      <tr>
+                        <td width="25px">({{card.count}})</td>
+                        <td><button class='kingdom' ng-mouseover="$parent.name=each.name;$parent.cost=each.cost;$parent.text=each.text;$parent.visible=true;$parent.cardColor=card.color" ng-mouseleave="$parent.visible=false;$parent.name='';$parent.text='';$parent.cost=''" style="background-color:{{card.color}};">{{card.name}}</button></td>
+                        <td>${{card.cost}}</td>
+                      </tr>
+                    </table>
+                  </li>
+              </ul>
+          </div>
+          <div class='kingdom'>
+              <ul>
+                <li ng-repeat="card in cards.kingdom | orderBy: '-cost' | slice:5:10">
+                  <table>
+                    <tr>
+                      <td width="25px">({{card.count}})</td>
+                      <td><button class='kingdom' ng-mouseover="$parent.name=each.name;$parent.cost=each.cost;$parent.text=each.text;$parent.visible=true;$parent.cardColor=card.color" ng-mouseleave="$parent.visible=false;$parent.name='';$parent.text='';$parent.cost=''" style="background-color:{{card.color}};">{{card.name}}</button></td>
+                      <td>${{card.cost}}</td>
+                    </tr>
+                  </table>
+                </li>
+              </ul>
+          </div>
         </div>
       </div>
       <div class="uk-width-4-5">
@@ -156,7 +191,7 @@
           <button onclick="javaScript:void(0);" class="uk-button uk-button-danger" style="float:right;margin-right:5px;"><i class="uk-icon-user-times"></i> Kick</button>
         </div>
       </div>
-    </div>  
+    </div>
   </main>
 </div>
 </body>
