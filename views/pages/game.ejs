@@ -28,68 +28,24 @@
     });
   });
   </script>
-  <style>
-    ul, li {
-        font-family:'verdana';
-    }
-    li {
-        font-size: 8pt;
-    }
-    ul {
-        list-style-position: inside;
-        list-style-type: none;
-    }
-    #victory, #treasure, div.kingdom {
-        float: left;
-        margin-left: -15px;
-    }
-
-    button.victory,button.treasure,button.kingdom,button.curse {
-        cursor: pointer;
-        margin-bottom: 2px;
-        width:75px;
-        font-size: 8pt
-    }
-    button.victory {
-        background-color: #82FA58;
-        border: 1px solid #000;
-    }
-    #cardDisplay {
-        clear: both;
-        width: 200px;
-        height: 250px;
-        margin: 15px;
-        border: 1px solid #000;
-    }
-    button.treasure {
-        background-color: #F3F781;
-        border: 1px solid #000;
-    }
-    button.kingdom {
-        border: 1px solid #1C1C1C;
-    }
-    button.curse {
-        background-color: #CC2EFA;
-        border: 1px solid #000;
-    }
-  </style>
+  <link rel="stylesheet" href="/css/game.css">
 </head>
 <body>
 <div class="uk-container uk-container-center uk-margin-large-bottom">
   <header>
     <% include ../partials/header %>
   </header>
-  <main ng-app="cardStore" ng-controller="CardController as cards">
+  <main ng-app="cardStore" ng-controller="CardController as cards" ng-init="dtitle='';dcost='';dbody='';dcolor=''">
     <div class="uk-grid uk-grid-collapse">
       <div class="uk-width-1-5">
-        <div class="uk-panel uk-panel-space" style="height:100px;">
+        <div class="uk-panel uk-panel-space" style="height:200px;">
           <div class="uk-panel-header"><h4 class="uk-panel-title"><i class="uk-icon-trophy"></i> Victory</h4></div>
           <ul>
             <li ng-repeat="card in cards.victory | orderBy:'-cost'" ng-if="card.count > 0">
               <table>
                 <tr>
-                  <td width="50px">({{card.count}})</td>
-                  <td><button class="victory">{{card.name}}</button></td>
+                  <td width="25px" style="text-align: right;">({{card.count}})</td>
+                  <td><button class='victory' ng-mouseover="$parent.dtitle=card.name;$parent.dcost='$'+card.cost;$parent.dbody='';$parent.dcolor=card.color;$parent.visible=true" ng-mouseleave="$parent.visible=false;$parent.dtitle='';$parent.dbody='';$parent.dcost='';$parent.dcolor=''">{{card.name}}</button></td>
                   <td>${{card.cost}}</td>
                 </tr>
               </table>
@@ -97,8 +53,8 @@
             <li ng-repeat="card in cards.curse | orderBy:'-cost'" ng-if="card.count > 0">
               <table>
                 <tr>
-                  <td width="50px">({{card.count}})</td>
-                  <td><button class="curse">{{card.name}}</button></td>
+                  <td width="25px" style="text-align: right;">({{card.count}})</td>
+                  <td><button class='curse' ng-mouseover="$parent.dtitle=card.name;$parent.dcost='$'+card.cost;$parent.dbody=card.text;$parent.dcolor=card.color;$parent.visible=true" ng-mouseleave="$parent.visible=false;$parent.dtitle='';$parent.dbody='';$parent.dcost='';$parent.dcolor=''">{{card.name}}</button></td>
                   <td>${{card.cost}}</td>
                 </tr>
               </table>
@@ -107,14 +63,14 @@
         </div>
       </div>
       <div class="uk-width-1-5">
-        <div class="uk-panel uk-panel-space" style="height:100px;">
+        <div class="uk-panel uk-panel-space" style="height:200px;">
           <div class="uk-panel-header"><h4 class="uk-panel-title"><i class="uk-icon-money"></i> Treasure</h4></div>
           <ul>
             <li ng-repeat="card in cards.treasure | orderBy:'-cost'" ng-if="card.count > 0">
               <table>
                 <tr>
-                  <td width="25px">({{card.count}})</td>
-                  <td><button class="treasure">{{card.name}}</button></td>
+                  <td width="25px" style="text-align: right;">({{card.count}})</td>
+                  <td><button class='treasure' ng-mouseover="$parent.dtitle=card.name;$parent.dcost='$'+card.cost;$parent.dbody=card.text;$parent.dcolor=card.color;$parent.visible=true" ng-mouseleave="$parent.visible=false;$parent.dtitle='';$parent.dbody='';$parent.dcost='';$parent.dcolor=''">{{card.name}}</button></td>
                   <td>${{card.cost}}</td>
                 </tr>
               </table>
@@ -122,16 +78,16 @@
           </ul>
         </div>
       </div>
-      <div class="uk-width-3-5">
-        <div class="uk-panel uk-panel-space" style="height:100px;">
+      <div class="uk-width-2-5">
+        <div class="uk-panel uk-panel-space" style="height:200px;">
           <div class="uk-panel-header"><h4 class="uk-panel-title"><i class="uk-icon-shield"></i> Kingdom</h4></div>
             <div class='kingdom'>
               <ul>
                   <li ng-repeat="card in cards.kingdom | orderBy: '-cost' | slice:0:5">
                     <table>
                       <tr>
-                        <td width="25px">({{card.count}})</td>
-                        <td><button class='kingdom' ng-mouseover="$parent.name=each.name;$parent.cost=each.cost;$parent.text=each.text;$parent.visible=true;$parent.cardColor=card.color" ng-mouseleave="$parent.visible=false;$parent.name='';$parent.text='';$parent.cost=''" style="background-color:{{card.color}};">{{card.name}}</button></td>
+                        <td width="25px" style="text-align: right;">({{card.count}})</td>
+                        <td><button class='kingdom' ng-mouseover="$parent.dtitle=card.name;$parent.dcost='$'+card.cost;$parent.dbody=card.text;$parent.dcolor=card.color;$parent.visible=true" ng-mouseleave="$parent.visible=false;$parent.dtitle='';$parent.dbody='';$parent.dcost='';$parent.dcolor=''" style="background-color:{{card.color}};">{{card.name}}</button></td>
                         <td>${{card.cost}}</td>
                       </tr>
                     </table>
@@ -143,13 +99,24 @@
                 <li ng-repeat="card in cards.kingdom | orderBy: '-cost' | slice:5:10">
                   <table>
                     <tr>
-                      <td width="25px">({{card.count}})</td>
-                      <td><button class='kingdom' ng-mouseover="$parent.name=each.name;$parent.cost=each.cost;$parent.text=each.text;$parent.visible=true;$parent.cardColor=card.color" ng-mouseleave="$parent.visible=false;$parent.name='';$parent.text='';$parent.cost=''" style="background-color:{{card.color}};">{{card.name}}</button></td>
+                      <td width="25px" style="text-align: right;">({{card.count}})</td>
+                      <td><button class='kingdom' ng-mouseover="$parent.dtitle=card.name;$parent.dcost='$'+card.cost;$parent.dbody=card.text;$parent.dcolor=card.color;$parent.visible=true" ng-mouseleave="$parent.visible=false;$parent.dtitle='';$parent.dbody='';$parent.dcost='';$parent.dcolor=''" style="background-color:{{card.color}};">{{card.name}}</button></td>
                       <td>${{card.cost}}</td>
                     </tr>
                   </table>
                 </li>
               </ul>
+          </div>
+        </div>
+      </div>
+      <div class="uk-width-1-5">
+        <div class="uk-panel uk-panel-box uk-panel-box-secondary display-card" ng-init="visible=false" ng-show="visible" style="background-color: {{dcolor}}">
+          <div class="uk-width-1-1 uk-panel uk-panel-box uk-panel-box-secondary display-title">
+	    <div style="float:left">{{dtitle}}</div>
+	    <div style="float:right">{{dcost}}</div>
+	  </div>
+          <div class="uk-width-1-1 uk-panel uk-panel-box uk-panel-box-secondary display-body">
+            <p>{{dbody}}</p>
           </div>
         </div>
       </div>
