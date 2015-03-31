@@ -27,7 +27,7 @@ socket.on('game message', function(msg) {
           for (var j in gameDeck[0][k]) {
             this.victory.push(gameDeck[0][k][j]);
           }
-        } else if (k === 'kingdom') {
+        }else if (k === 'kingdom') {
           for (var j in gameDeck[0][k]) {
             this.kingdom.push(gameDeck[0][k][j]);
           }
@@ -37,7 +37,7 @@ socket.on('game message', function(msg) {
           }
         }else if (k === 'curse') {
           for (var j in gameDeck[0][k]) {
-            console.log(gameDeck[0][k]);
+            //console.log(gameDeck[0][k]);
             this.curse.push(gameDeck[0][k][j]);
           }
         }

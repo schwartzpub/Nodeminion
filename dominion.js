@@ -254,7 +254,6 @@ io.on('connection', function(socket) {
       var thisDeck = {
         kingdom     : {},
         treasure    : {
-          Platinum  : deckType['treasure']['Platinum'],
           Gold      : deckType['treasure']['Gold'],
           Silver    : deckType['treasure']['Silver'],
           Copper    : deckType['treasure']['Copper']
@@ -263,7 +262,6 @@ io.on('connection', function(socket) {
           Curse     : deckType['curse']['Curse']
         },
         victory     : {
-          Colony    : deckType['victory']['Colony'],
           Province  : deckType['victory']['Province'],
           Duchy     : deckType['victory']['Duchy'],
           Estate    : deckType['victory']['Estate']
@@ -271,8 +269,12 @@ io.on('connection', function(socket) {
       };
 
       thisDeck.curse.Curse['count'] = ((newGame.numPlayers) === 2 ? 10 : ((newGame.numPlayers === 3) ? 20 : 30));      
-      thisDeck.treasure.Platinum['count'] = ((newGame.type === 'prosperity') ? 12 : 0);      
-      thisDeck.victory.Colony['count'] = ((newGame.type === 'prosperity' && thisDeck.treasure.Platinum > 0) ? ((newGame.numPlayers < 3) ? 8 : 12) : 0);      
+      if (newGame.type === 'prosperity') {
+        thisDeck.treasure['Platinum'] = deckType['treasure']['Platinum'];
+        thisDeck.victory['Colony'] = deckType['victory']['Colony'];
+        thisDeck.treasure.Platinum['count'] = ((newGame.type === 'prosperity' && newGame.numPlayers < 3) ? 12 : 0);
+        thisDeck.victory.Colony['count'] = ((newGame.type === 'prosperity' && thisDeck.treasure.Platinum > 0) ? ((newGame.numPlayers < 3) ? 8 : 12) : 0);
+      }
       thisDeck.victory.Province['count'] = thisDeck.victory.Duchy['count'] = thisDeck.victory.Estate['count'] = ((newGame.numPlayers < 3) ? 8 : 12);
       thisDeck.treasure.Gold['count'] = 30;
       thisDeck.treasure.Silver['count'] = 40;

@@ -4,6 +4,9 @@
 <head>
   <% include ../partials/head %>
   <script>
+    var gameId = '<%- gameid %>';
+    var user = <% if (typeof user !== "undefined" && user) { %><%- '"' + String(user.local.username) + '"'%><% } %>;
+    var userid = <%-user._id%>
     var gameDeck = {};
     var gameJSON = <%-JSON.stringify(gamedeck)%>;
     for (var attr in gameJSON) {
@@ -13,11 +16,8 @@
   <script src="/js/game/game.js"></script>
   <script>
   var socket = io();
-  var gameId = '<%- gameid %>';
-  var user = <% if (typeof user !== "undefined" && user) { %><%- '"' + String(user.local.username) + '"'%><% } %>;  
   document.addEventListener('DOMContentLoaded', function() {
     <%if (typeof user !== "undefined" && user) { %>socket.emit('send user', '<%-user._id%>');<%} %>
-
     document.forms['private-lobby-form'].addEventListener('submit', function(e) {
       e.preventDefault();
       var timestamp = new Date().getTime();
@@ -41,7 +41,7 @@
         <div class="uk-panel uk-panel-space" style="height:200px;">
           <div class="uk-panel-header"><h4 class="uk-panel-title"><i class="uk-icon-trophy"></i> Victory</h4></div>
           <ul>
-            <li ng-repeat="card in cards.victory | orderBy:'-cost'" ng-if="card.count > 0">
+            <li ng-repeat="card in cards.victory | orderBy:'-cost'">
               <table>
                 <tr>
                   <td width="25px" style="text-align: right;">({{card.count}})</td>
@@ -50,7 +50,7 @@
                 </tr>
               </table>
             </li>
-            <li ng-repeat="card in cards.curse | orderBy:'-cost'" ng-if="card.count > 0">
+            <li ng-repeat="card in cards.curse | orderBy:'-cost'">
               <table>
                 <tr>
                   <td width="25px" style="text-align: right;">({{card.count}})</td>
@@ -66,7 +66,7 @@
         <div class="uk-panel uk-panel-space" style="height:200px;">
           <div class="uk-panel-header"><h4 class="uk-panel-title"><i class="uk-icon-money"></i> Treasure</h4></div>
           <ul>
-            <li ng-repeat="card in cards.treasure | orderBy:'-cost'" ng-if="card.count > 0">
+            <li ng-repeat="card in cards.treasure | orderBy:'-cost'">
               <table>
                 <tr>
                   <td width="25px" style="text-align: right;">({{card.count}})</td>
@@ -120,9 +120,17 @@
           </div>
         </div>
       </div>
-      <div class="uk-width-4-5">
+      <div class="uk-width-3-5">
         <div class="uk-panel uk-panel-space" style="height:300px;">
           <div class="uk-panel-header"><h4 class="uk-panel-title"><i class="uk-icon-photo"></i> Play Area</h4></div>
+        </div>
+      </div>
+      <div class="uk-width-1-5">
+        <div class="uk-panel uk-panel-space" style="height:300px;">
+          <div class="uk-panel-header"><h4 class="uk-panel-title"><i class="uk-icon-th-large"></i> Cards</h4></div>
+          <div class='deck'>Deck: <span style="letter-spacing:-2px;">∣∣∣∣</span></div>
+          <div class='discard'>Discard: <span style="letter-spacing:-2px;">∣∣∣∣∣∣∣∣</span></div>
+          <div class='hand'>Hand:</div>
         </div>
       </div>
       <div class="uk-width-1-5">
