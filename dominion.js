@@ -242,7 +242,7 @@ io.on('connection', function(socket) {
     // createPlayer function.  This adds players to the newly instatiated game in the game database.
     function createPlayer(newGame, buildDeck) {
       for (var i = 0; i < gamelist[userId].players.length; i++) {
-        newGame.players.set(i, {'userid' : gamelist[userId].players[i], 'turn' : false, 'winner' : false, 'finalscore' : 0, 'status' : 1, 'deck' : [], 'hand' : []});
+        newGame.players.set(i, {'userid' : gamelist[userId].players[i], 'turn' : false, 'winner' : false, 'finalscore' : 0, 'status' : 1});
       }
       buildDeck(newGame, buildPlayers); // Move on to saveGame method.
     };
@@ -287,27 +287,35 @@ io.on('connection', function(socket) {
       
       newGame.deck = thisDeck;
       
-      buildPlayers(newGame, saveGame);
+      buildPlayers(newGame, deckType, saveGame);
     };
     
-    function buildPlayers(newGame, saveGame) {
+    function buildPlayers(newGame, deckType, saveGame) {
       var playerOrder = [];
       
       newGame.players.forEach( function(p) {
+        User.findById(p.userid, function (err, document) {
+          if (err) { console.log(err); }
+          for (var i = 0; i < 7; i ++) {
+            if(i<3){ 
+              document.local.deck.push(deckType['victory']['Estate']);
+              document.local.deck.push(deckType['treasure']['Copper']);
+            } else if (i>2 && i<6) {
+              document.local.deck.push(deckType['treasure']['Copper']);
+            } else {
+              document.local.deck.push(deckType['treasure']['Copper']);
+              document.local.deck = _.shuffle(document.local.deck);
+            }
+          }
+          document.local.hand = document.local.deck.splice(1,5);
+          document.save( function(err) {
+            if (err) { console.log(err); }
+          });
+        });
+        
         playerOrder.push(p.userid);
         newGame.deck.Copper -= 7;
         newGame.deck.Estate -= 3;
-        for (var i = 0; i < 7; i ++) {
-          if(i<3){ 
-            p.deck.push('Estate');
-            p.deck.push('Copper');
-          } else if (i>2 && i<6) {
-            p.deck.push('Copper');
-          } else {
-            p.deck.push('Copper');
-            p.deck = _.shuffle(p.deck);
-          }
-        }
       });
       
       newGame.order.push(_.shuffle(playerOrder));

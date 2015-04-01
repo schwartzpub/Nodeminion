@@ -15,6 +15,9 @@ var userSchema = mongoose.Schema({
     losses      : Number,
     status      : Number,
     gameid      : String,
+    deck        : Array,
+    discard     : Array,
+    hand        : Array
    }
   
 });

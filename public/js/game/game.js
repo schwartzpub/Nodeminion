@@ -21,6 +21,11 @@ socket.on('game message', function(msg) {
       this.kingdom = [];
       this.treasure = [];
       this.curse = [];
+      this.hand = [];
+      
+      for (var h in userHand[0]) {
+        this.hand.push(userHand[0][h]);
+      }
       
       for (var k in gameDeck[0]) {
         if (k === 'victory') {
