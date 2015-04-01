@@ -1,0 +1,83 @@
+ul, li {
+  font-family:'verdana';
+}
+li {
+  font-size: 8pt;
+  margin-bottom: -5px;
+}
+ul {
+  list-style-position: inside;
+  list-style-type: none;
+  padding-left: 0px;
+  padding-right: 20px;
+}
+#victory, #treasure, div.kingdom {
+  float: left;
+  margin-left: -15px;
+}
+button.victory,button.treasure,button.kingdom,button.curse {
+  cursor: pointer;
+  width:75px;
+  font-size: 8pt;
+  text-align: left;
+}
+button.victory {
+  background-color: #82FA58;
+  border: 1px solid #000;
+}
+#cardDisplay {
+  clear: both;
+  width: 200px;
+  height: 250px;
+  margin: 15px;
+  border: 1px solid #000;
+}
+div.card-value {
+  background-color: #82FA58;
+  border: 1px solid #000;
+  position: absolute;
+  left: 5px;
+  bottom: 5px;
+  width: 24px;
+  height: 24px;
+  color: #000;
+  border-radius: 12px;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 24px;
+}
+button.treasure {
+  background-color: #F3F781;
+  border: 1px solid #000;
+}
+button.kingdom {
+  border: 1px solid #1C1C1C;
+}
+button.curse {
+  background-color: #CC2EFA;
+  border: 1px solid #000;
+}
+div.display-card {
+  margin: 25px auto;
+  padding: 5px;
+  height: 200px;
+  width: 150px;
+  border: 1px solid #000;
+}
+div.display-title {
+  height: 50px;
+  border: 1px solid #000;
+  color: #000; 
+}
+div.display-body {
+  margin-top: 5px;
+  height: 145px;
+  font-size: 8pt;
+  border: 1px solid #000;
+  line-height: 125%;
+  color: #000;
+}
+li.hand {
+  margin-bottom: -2px;
+  margin-left: 5px;
+}
