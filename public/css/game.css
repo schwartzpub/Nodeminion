@@ -38,13 +38,13 @@ div.card-value {
   position: absolute;
   left: 5px;
   bottom: 5px;
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   color: #000;
-  border-radius: 12px;
+  border-radius: 13px;
   text-align: center;
   vertical-align: middle;
-  line-height: 24px;
+  line-height: 26px;
 }
 button.treasure {
   background-color: #F3F781;
@@ -54,7 +54,7 @@ button.kingdom {
   border: 1px solid #1C1C1C;
 }
 button.curse {
-  background-color: #CC2EFA;
+  background-color: #AC58FA;
   border: 1px solid #000;
 }
 div.display-card {

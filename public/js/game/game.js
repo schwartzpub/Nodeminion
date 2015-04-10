@@ -42,7 +42,6 @@ socket.on('game message', function(msg) {
           }
         }else if (k === 'curse') {
           for (var j in gameDeck[0][k]) {
-            //console.log(gameDeck[0][k]);
             this.curse.push(gameDeck[0][k][j]);
           }
         }

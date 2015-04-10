@@ -36,7 +36,7 @@
   <header>
     <% include ../partials/header %>
   </header>
-  <main ng-app="cardStore" ng-controller="CardController as cards" ng-init="dtitle='';dcost='';dbody='';dcolor=''">
+  <main ng-app="cardStore" ng-controller="CardController as cards" ng-init="dtitle='';dcost='';dbody='';dcolor='';dvalue='';">
     <div class="uk-grid uk-grid-collapse">
       <div class="uk-width-1-5">
         <div class="uk-panel uk-panel-space" style="height:200px;">
@@ -46,7 +46,7 @@
               <table>
                 <tr>
                   <td width="25px" style="text-align: right;">({{card.count}})</td>
-                  <td><button class='victory' ng-mouseover="$parent.dtitle=card.name;$parent.dcost='$'+card.cost;$parent.dbody='';$parent.dcolor=card.color;$parent.visible=true" ng-mouseleave="$parent.visible=false;$parent.dtitle='';$parent.dbody='';$parent.dcost='';$parent.dcolor=''">{{card.name}}</button></td>
+                  <td><button class='victory' ng-mouseover="$parent.dvalue=card.value;$parent.dtitle=card.name;$parent.dcost='$'+card.cost;$parent.dbody='';$parent.dcolor=card.color;$parent.visible=true" ng-mouseleave="$parent.visible=false;$parent.dtitle='';$parent.dbody='';$parent.dcost='';$parent.dcolor='';$parent.dvalue=''">{{card.name}}</button></td>
                   <td>${{card.cost}}</td>
                 </tr>
               </table>
@@ -55,7 +55,7 @@
               <table>
                 <tr>
                   <td width="25px" style="text-align: right;">({{card.count}})</td>
-                  <td><button class='curse' ng-mouseover="$parent.dtitle=card.name;$parent.dcost='$'+card.cost;$parent.dbody=card.text;$parent.dcolor=card.color;$parent.visible=true" ng-mouseleave="$parent.visible=false;$parent.dtitle='';$parent.dbody='';$parent.dcost='';$parent.dcolor=''">{{card.name}}</button></td>
+                  <td><button class='curse' ng-mouseover="$parent.dvalue=card.value;$parent.dtitle=card.name;$parent.dcost='$'+card.cost;$parent.dbody=card.text;$parent.dcolor=card.color;$parent.visible=true" ng-mouseleave="$parent.visible=false;$parent.dtitle='';$parent.dbody='';$parent.dcost='';$parent.dcolor='';$parent.dvalue=''">{{card.name}}</button></td>
                   <td>${{card.cost}}</td>
                 </tr>
               </table>
@@ -71,7 +71,7 @@
               <table>
                 <tr>
                   <td width="25px" style="text-align: right;">({{card.count}})</td>
-                  <td><button class='treasure' ng-mouseover="$parent.dtitle=card.name;$parent.dcost='$'+card.cost;$parent.dbody=card.text;$parent.dcolor=card.color;$parent.visible=true" ng-mouseleave="$parent.visible=false;$parent.dtitle='';$parent.dbody='';$parent.dcost='';$parent.dcolor=''">{{card.name}}</button></td>
+                  <td><button class='treasure' ng-mouseover="$parent.dvalue=card.value;$parent.dtitle=card.name;$parent.dcost='$'+card.cost;$parent.dbody=card.text;$parent.dcolor=card.color;$parent.visible=true" ng-mouseleave="$parent.visible=false;$parent.dtitle='';$parent.dbody='';$parent.dcost='';$parent.dcolor='';$parent.dvalue=''">{{card.name}}</button></td>
                   <td>${{card.cost}}</td>
                 </tr>
               </table>
@@ -88,7 +88,7 @@
                     <table>
                       <tr>
                         <td width="25px" style="text-align: right;">({{card.count}})</td>
-                        <td><button class='kingdom' ng-mouseover="$parent.dtitle=card.name;$parent.dcost='$'+card.cost;$parent.dbody=card.text;$parent.dcolor=card.color;$parent.visible=true" ng-mouseleave="$parent.visible=false;$parent.dtitle='';$parent.dbody='';$parent.dcost='';$parent.dcolor=''" style="background-color:{{card.color}};">{{card.name}}</button></td>
+                        <td><button class='kingdom' ng-mouseover="$parent.dvalue=card.value;$parent.dtitle=card.name;$parent.dcost='$'+card.cost;$parent.dbody=card.text;$parent.dcolor=card.color;$parent.visible=true" ng-mouseleave="$parent.visible=false;$parent.dtitle='';$parent.dbody='';$parent.dcost='';$parent.dcolor='';$parent.dvalue=''" style="background-color:{{card.color}};">{{card.name}}</button></td>
                         <td>${{card.cost}}</td>
                       </tr>
                     </table>
@@ -101,7 +101,7 @@
                   <table>
                     <tr>
                       <td width="25px" style="text-align: right;">({{card.count}})</td>
-                      <td><button class='kingdom' ng-mouseover="$parent.dtitle=card.name;$parent.dcost='$'+card.cost;$parent.dbody=card.text;$parent.dcolor=card.color;$parent.visible=true" ng-mouseleave="$parent.visible=false;$parent.dtitle='';$parent.dbody='';$parent.dcost='';$parent.dcolor=''" style="background-color:{{card.color}};">{{card.name}}</button></td>
+                      <td><button class='kingdom' ng-mouseover="$parent.dvalue=card.value;$parent.dtitle=card.name;$parent.dcost='$'+card.cost;$parent.dbody=card.text;$parent.dcolor=card.color;$parent.visible=true" ng-mouseleave="$parent.visible=false;$parent.dtitle='';$parent.dbody='';$parent.dcost='';$parent.dcolor='';$parent.dvalue=''" style="background-color:{{card.color}};">{{card.name}}</button></td>
                       <td>${{card.cost}}</td>
                     </tr>
                   </table>
@@ -118,7 +118,7 @@
           </div>
           <div class="uk-width-1-1 uk-panel uk-panel-box uk-panel-box-secondary display-body">
             <p>{{dbody}}</p>
-            <div class='card-value'>1VP</div>
+            <div class='card-value' ng-show="(dvalue>0 || dvalue<0) && dcolor!='#F3F781'" style='background-color: {{dcolor}}'>{{dvalue}}VP</div>
           </div>
         </div>
       </div>
@@ -135,7 +135,7 @@
           <div class='hand'>
             <ul>
               <lh>Hand</lh>
-              <li class='hand' ng-repeat="card in cards.hand"><button class="{{card.type[0]}} hand" ng-mouseover="$parent.dtitle=card.name;$parent.dcost='$'+card.cost;$parent.dbody=card.text;$parent.dcolor=card.color;$parent.visible=true" ng-mouseleave="$parent.visible=false;$parent.dtitle='';$parent.dbody='';$parent.dcost='';$parent.dcolor=''" style="background-color:{{card.color}};">{{card.name}}</button></li>
+              <li class='hand' ng-repeat="card in cards.hand"><button class="{{card.type[0]}} hand" ng-mouseover="$parent.dtitle=card.name;$parent.dcost='$'+card.cost;$parent.dbody=card.text;$parent.dcolor=card.color;$parent.visible=true" ng-mouseleave="$parent.visible=false;$parent.dtitle='';$parent.dbody='';$parent.dcost='';$parent.dvalue='';$parent.dcolor=''" style="background-color:{{card.color}};">{{card.name}}</button></li>
             </ul>
           </div>
         </div>
