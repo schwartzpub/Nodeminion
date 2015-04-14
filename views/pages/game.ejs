@@ -7,6 +7,8 @@
     var gameId = '<%- gameid %>';
     var user = <% if (typeof user !== "undefined" && user) { %><%- '"' + String(user.local.username) + '"'%><% } %>;
     var userid = '<%-user._id%>';
+    var userDeck = <%-user.local.deck.length%>;
+    var userDiscard = <%-user.local.discard.length%>;
     var userHand = [<%-JSON.stringify(user.local.hand)%>];
     var gameDeck = {};
     var gameJSON = <%-JSON.stringify(gamedeck)%>;
@@ -130,12 +132,12 @@
       <div class="uk-width-1-5">
         <div class="uk-panel uk-panel-space" style="height:300px;">
           <div class="uk-panel-header"><h4 class="uk-panel-title"><i class="uk-icon-th-large"></i> Cards</h4></div>
-          <div class='deck'>Deck: <span style="letter-spacing:-2px;">∣∣∣∣</span></div>
-          <div class='discard'>Discard: <span style="letter-spacing:-2px;">∣∣∣∣∣∣∣∣</span></div>
+          <div class='deck'>Deck: <span style="letter-spacing:-2px;">{{cards.userDeckCount}}</span></div>
+          <div class='discard'>Discard: <span style="letter-spacing:-2px;">{{cards.userDiscardCount}}</span></div>
           <div class='hand'>
             <ul>
               <lh>Hand</lh>
-              <li class='hand' ng-repeat="card in cards.hand"><button class="{{card.type[0]}} hand" ng-mouseover="$parent.dtitle=card.name;$parent.dcost='$'+card.cost;$parent.dbody=card.text;$parent.dcolor=card.color;$parent.visible=true" ng-mouseleave="$parent.visible=false;$parent.dtitle='';$parent.dbody='';$parent.dcost='';$parent.dvalue='';$parent.dcolor=''" style="background-color:{{card.color}};">{{card.name}}</button></li>
+              <li class='hand' ng-repeat="card in cards.hand"><button class="{{card.type[0]}} hand" ng-mouseover="$parent.dvalue=card.value;$parent.dtitle=card.name;$parent.dcost='$'+card.cost;$parent.dbody=card.text;$parent.dcolor=card.color;$parent.visible=true" ng-mouseleave="$parent.visible=false;$parent.dtitle='';$parent.dbody='';$parent.dvalue='';$parent.dcost='';$parent.dvalue='';$parent.dcolor=''" style="background-color:{{card.color}};">{{card.name}}</button></li>
             </ul>
           </div>
         </div>

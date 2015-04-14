@@ -17,6 +17,8 @@ socket.on('game message', function(msg) {
     
     app.controller('CardController', function ($scope,$http) {
       this.deck = gameDeck;
+      this.userDeckCount = ('∣').repeat(userDeck);
+      this.userDiscardCount = ('∣').repeat(userDiscard);
       this.victory = [];
       this.kingdom = [];
       this.treasure = [];
