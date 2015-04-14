@@ -215,7 +215,7 @@ io.on('connection', function(socket) {
       gamelist[userId].status = 1;
       gamelist[userId].gameid = gameId;   
 
-      var newGame = new Game(); // Instatiate new game
+      var newGame = new Game(); // Instantiate new game
       newGame.room = gameId;
       newGame.type = deckBuild;
       newGame.status = 1;

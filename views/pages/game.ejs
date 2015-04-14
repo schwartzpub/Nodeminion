@@ -10,6 +10,7 @@
     var userDeck = <%-user.local.deck.length%>;
     var userDiscard = <%-user.local.discard.length%>;
     var userHand = [<%-JSON.stringify(user.local.hand)%>];
+    var players = <%-JSON.stringify(players)%>;
     var gameDeck = {};
     var gameJSON = <%-JSON.stringify(gamedeck)%>;
     for (var attr in gameJSON) {
@@ -136,7 +137,7 @@
           <div class='discard'>Discard: <span style="letter-spacing:-2px;">{{cards.userDiscardCount}}</span></div>
           <div class='hand'>
             <ul>
-              <lh>Hand</lh>
+              <lh>Hand:</lh>
               <li class='hand' ng-repeat="card in cards.hand"><button class="{{card.type[0]}} hand" ng-mouseover="$parent.dvalue=card.value;$parent.dtitle=card.name;$parent.dcost='$'+card.cost;$parent.dbody=card.text;$parent.dcolor=card.color;$parent.visible=true" ng-mouseleave="$parent.visible=false;$parent.dtitle='';$parent.dbody='';$parent.dvalue='';$parent.dcost='';$parent.dvalue='';$parent.dcolor=''" style="background-color:{{card.color}};">{{card.name}}</button></li>
             </ul>
           </div>
@@ -144,7 +145,13 @@
       </div>
       <div class="uk-width-1-5">
         <div class="uk-panel uk-panel-space" style="height:300px;">
-          <div class="uk-panel-header"><h4 class="uk-panel-title"><i class="uk-icon-gamepad"></i> Controls</h4></div>
+          <div class="uk-panel-header"><h4 class="uk-panel-title"><i class="uk-icon-gamepad"></i> Game</h4></div>
+          <div class="players uk-width-1-1">
+            <ul>
+              <lh>Players:</lh>
+              <li ng-repeat="player in cards.players">{{player}}</li>
+            </ul>
+          </div>
         </div>
       </div>
       <div class="uk-width-3-6">
