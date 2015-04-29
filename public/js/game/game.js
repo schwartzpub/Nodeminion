@@ -24,7 +24,7 @@ socket.on('game message', function(msg) {
       this.treasure = [];
       this.curse = [];
       this.hand = [];
-      this.players = players[0];
+      this.players = players;
       
       for (var h in userHand[0]) {
         this.hand.push(userHand[0][h]);

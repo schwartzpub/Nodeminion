@@ -5,7 +5,7 @@ var socket = io();
 var acceptTimeout;
 
 // Add player function that adds a player to the Create Game list
-function addPlayer(userId,userName,leaderId){
+function addPlayer(userId,userName,leaderId,leaderName){
   if (playerList.length === 0) {
     socket.emit('new game', leaderId);
     $('#startIcon').toggleClass('uk-icon-spin');
@@ -15,7 +15,7 @@ function addPlayer(userId,userName,leaderId){
     playerList.push(userId);
     gameList.push(userId);
     
-    socket.emit('add player', userId, userName, leaderId);
+    socket.emit('add player', userId, userName, leaderId, leaderName);
     
     $("#setupList").append('<li id="'+userId+'-li"><i id="' + userId + '-icon" class="uk-icon-circle-o-notch uk-icon-spin"></i> ' + userName + '</li>');
     $("#playerCount").text('Create Game (' + playerList.length + ')');

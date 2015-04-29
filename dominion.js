@@ -142,21 +142,23 @@ io.on('connection', function(socket) {
   });
   
   // Function to add player(s) to a new game. 
-  socket.on('add player', function(userid, username, leaderid) {
+  socket.on('add player', function(userid, username, leaderid, leadername) {
     
-    setupLeader(userid, username, leaderid, setupPlayer);
+    setupLeader(userid, username, leaderid, leadername, setupPlayer);
     
     // If this leader has no games in the gamelist, then ok to start making one.
-    function setupLeader (userid, username, leaderid, setupPlayer) {
+    function setupLeader (userid, username, leaderid, leadername, setupPlayer) {
       if (!(leaderid in gamelist)) {    
         gamelist[leaderid] = {
           gameid  : '',
           players : [leaderid,userid],
+          playerNames : [],
           winner  : "none",
           turn  : 0,
           status  : 0 
         };
         
+        gamelist[leaderid].playerNames.push({'userid':leaderid, 'username':leadername});
         // Find leader in user database, and mark as '1' for waiting on game
         User.findById(leaderid, function (err, document) {
           if (err) { console.log(err); }
@@ -165,7 +167,7 @@ io.on('connection', function(socket) {
           document.save( function(err) {
             if (err) { console.log(err); }
             io.emit('add alert', leaderid, 1);  // Tell clients on server that user-to-add cannot be selected for a new game  
-            setupPlayer(userid, username, leaderid, leader);
+            setupPlayer(userid, username, leaderid, leadername);
           });
         }); 
         
@@ -181,6 +183,7 @@ io.on('connection', function(socket) {
         console.log('this user is: ' + userid);
       } else {
         sessionlist[userid].emit('user add alert', leaderid, leader);
+        gamelist[leaderid].playerNames.push({'userid':userid, 'username':username});
         io.emit('add alert', userid, 1); // Tell clients on server that user-to-add cannot be selected for a new game
         
         // Find user-to-add in user database, and mark as '1' for waiting on game
@@ -214,13 +217,13 @@ io.on('connection', function(socket) {
     function createGame(userId, gameId, deckBuild, createPlayer) {
       gamelist[userId].status = 1;
       gamelist[userId].gameid = gameId;   
-
       var newGame = new Game(); // Instantiate new game
       newGame.room = gameId;
       newGame.type = deckBuild;
       newGame.status = 1;
       newGame.winner = 'none';
       newGame.players = [];
+      newGame.playerNames = gamelist[userId].playerNames;
       newGame.start = new Date().getTime();
       newGame.numPlayers = gamelist[userId].players.length;   
 
@@ -242,7 +245,7 @@ io.on('connection', function(socket) {
     // createPlayer function.  This adds players to the newly instatiated game in the game database.
     function createPlayer(newGame, buildDeck) {
       for (var i = 0; i < gamelist[userId].players.length; i++) {
-        newGame.players.set(i, {'userid' : gamelist[userId].players[i], 'turn' : false, 'winner' : false, 'finalscore' : 0, 'status' : 1});
+        newGame.players.set(i, {'userid' : gamelist[userId].playerNames[i].userid, 'username':gamelist[userId].playerNames[i].username,'turn' : false, 'winner' : false, 'finalscore' : 0, 'status' : 1});
       }
       buildDeck(newGame, buildPlayers); // Move on to saveGame method.
     };
@@ -356,6 +359,9 @@ io.on('connection', function(socket) {
         if (err) { console.log(err); }
         document.local.status = 0;
         document.local.gameid = '';
+        document.local.hand = [];
+        document.local.deck = [];
+        document.local.discard = [];
         document.save( function (err) {
           if (err) { console.log(err); }
         });

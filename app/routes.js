@@ -63,16 +63,17 @@ module.exports = function(app, passport, mongoose) {
       Game.findOne({'room' :req.params.id}, function(err, document) {
         if (err) { console.log(err); }
         //console.log(document.deck[0]);
-        renderGame(req,document.deck,document.type,document.players);
+        renderGame(req,document.deck,document.type,document.players,document.playerNames);
       });
     }
     
-    function renderGame(req,deck,type,order) {
+    function renderGame(req,deck,type,order,players) {
       req.session.cookie.expires = 1000 * 60 * 60 * 24 * 30;
       res.render('pages/game.ejs', {
         user : req.user,
         gameid : req.params.id,
         players : order,
+        playerNames : players,
         gametype : type,
         gamedeck : deck
       });
